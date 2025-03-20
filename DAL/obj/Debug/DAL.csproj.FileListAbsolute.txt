@@ -1,0 +1,9 @@
+C:\Users\thanh\source\repos\EMS\DAL\bin\Debug\DAL.dll
+C:\Users\thanh\source\repos\EMS\DAL\bin\Debug\DAL.pdb
+C:\Users\thanh\source\repos\EMS\DAL\bin\Debug\DTO.dll
+C:\Users\thanh\source\repos\EMS\DAL\bin\Debug\DTO.pdb
+C:\Users\thanh\source\repos\EMS\DAL\obj\Debug\DAL.csproj.AssemblyReference.cache
+C:\Users\thanh\source\repos\EMS\DAL\obj\Debug\DAL.csproj.CoreCompileInputs.cache
+C:\Users\thanh\source\repos\EMS\DAL\obj\Debug\DAL.csproj.Up2Date
+C:\Users\thanh\source\repos\EMS\DAL\obj\Debug\DAL.dll
+C:\Users\thanh\source\repos\EMS\DAL\obj\Debug\DAL.pdb
