@@ -1,0 +1,13 @@
+# Bỏ qua thư mục của Visual Studio
+.vs/
+
+# Bỏ qua thư mục build
+bin/
+obj/
+
+# Bỏ qua file cấu hình của Visual Studio
+*.suo
+*.user
+*.vcxproj.user
+*.cache
+*.log
