@@ -2,8 +2,14 @@
 .vs/
 
 # Bỏ qua thư mục build
-bin/
-obj/
+GTO/bin/
+DTO/bin/
+DAL/bin/
+BLL/bin/
+GTO/obj/
+DTO/obj/
+DAL/obj/
+BLL/obj/
 
 # Bỏ qua file cấu hình của Visual Studio
 *.suo
