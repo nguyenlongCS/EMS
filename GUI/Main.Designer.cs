@@ -105,11 +105,7 @@
             this.button_Search_ChamCong = new System.Windows.Forms.Button();
             this.textBox_Search_ChamCong = new System.Windows.Forms.TextBox();
             this.tabPage_ChamCong = new System.Windows.Forms.TabPage();
-            this.DataGridView_ChamCong = new Guna.UI2.WinForms.Guna2DataGridView();
-            this.Ma_ChamCong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NgayTinhCong_BatDau = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridView_ChamCong = new Guna.UI2.WinForms.Guna2DataGridView();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label40 = new System.Windows.Forms.Label();
             this.panel_ChamCong = new System.Windows.Forms.Panel();
@@ -169,7 +165,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView_DSNV_Luong)).BeginInit();
             this.groupBox_phieuluong.SuspendLayout();
             this.tabPage_ChamCong.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DataGridView_ChamCong)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_ChamCong)).BeginInit();
             this.panel_ChamCong.SuspendLayout();
             this.groupBox_CheckOut.SuspendLayout();
             this.groupBox_CheckIn.SuspendLayout();
@@ -987,7 +983,7 @@
             // tabPage_ChamCong
             // 
             this.tabPage_ChamCong.BackColor = System.Drawing.Color.LightBlue;
-            this.tabPage_ChamCong.Controls.Add(this.DataGridView_ChamCong);
+            this.tabPage_ChamCong.Controls.Add(this.dataGridView_ChamCong);
             this.tabPage_ChamCong.Controls.Add(this.textBox2);
             this.tabPage_ChamCong.Controls.Add(this.label40);
             this.tabPage_ChamCong.Controls.Add(this.panel_ChamCong);
@@ -998,86 +994,57 @@
             this.tabPage_ChamCong.TabIndex = 2;
             this.tabPage_ChamCong.Text = "Chấm Công";
             // 
-            // DataGridView_ChamCong
+            // dataGridView_ChamCong
             // 
             dataGridViewCellStyle7.BackColor = System.Drawing.Color.White;
-            this.DataGridView_ChamCong.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            this.dataGridView_ChamCong.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
             dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(88)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle8.ForeColor = System.Drawing.Color.White;
             dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataGridView_ChamCong.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            this.DataGridView_ChamCong.ColumnHeadersHeight = 41;
-            this.DataGridView_ChamCong.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
-            this.DataGridView_ChamCong.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Ma_ChamCong,
-            this.dataGridViewTextBoxColumn10,
-            this.dataGridViewTextBoxColumn11,
-            this.NgayTinhCong_BatDau});
+            this.dataGridView_ChamCong.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            this.dataGridView_ChamCong.ColumnHeadersHeight = 4;
+            this.dataGridView_ChamCong.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle9.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(69)))), ((int)(((byte)(94)))));
             dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
             dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(69)))), ((int)(((byte)(94)))));
             dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DataGridView_ChamCong.DefaultCellStyle = dataGridViewCellStyle9;
-            this.DataGridView_ChamCong.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
-            this.DataGridView_ChamCong.Location = new System.Drawing.Point(8, 48);
-            this.DataGridView_ChamCong.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.DataGridView_ChamCong.Name = "DataGridView_ChamCong";
-            this.DataGridView_ChamCong.RowHeadersVisible = false;
-            this.DataGridView_ChamCong.RowHeadersWidth = 62;
-            this.DataGridView_ChamCong.Size = new System.Drawing.Size(1388, 332);
-            this.DataGridView_ChamCong.TabIndex = 40;
-            this.DataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White;
-            this.DataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.Font = null;
-            this.DataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty;
-            this.DataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = System.Drawing.Color.Empty;
-            this.DataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = System.Drawing.Color.Empty;
-            this.DataGridView_ChamCong.ThemeStyle.BackColor = System.Drawing.Color.White;
-            this.DataGridView_ChamCong.ThemeStyle.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
-            this.DataGridView_ChamCong.ThemeStyle.HeaderStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(88)))), ((int)(((byte)(255)))));
-            this.DataGridView_ChamCong.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            this.DataGridView_ChamCong.ThemeStyle.HeaderStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DataGridView_ChamCong.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White;
-            this.DataGridView_ChamCong.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
-            this.DataGridView_ChamCong.ThemeStyle.HeaderStyle.Height = 41;
-            this.DataGridView_ChamCong.ThemeStyle.ReadOnly = false;
-            this.DataGridView_ChamCong.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White;
-            this.DataGridView_ChamCong.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.DataGridView_ChamCong.ThemeStyle.RowsStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DataGridView_ChamCong.ThemeStyle.RowsStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(69)))), ((int)(((byte)(94)))));
-            this.DataGridView_ChamCong.ThemeStyle.RowsStyle.Height = 22;
-            this.DataGridView_ChamCong.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
-            this.DataGridView_ChamCong.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(69)))), ((int)(((byte)(94)))));
-            // 
-            // Ma_ChamCong
-            // 
-            this.Ma_ChamCong.HeaderText = "Mã Chấm Công";
-            this.Ma_ChamCong.MinimumWidth = 8;
-            this.Ma_ChamCong.Name = "Ma_ChamCong";
-            // 
-            // dataGridViewTextBoxColumn10
-            // 
-            this.dataGridViewTextBoxColumn10.HeaderText = "Mã Nhân Viên";
-            this.dataGridViewTextBoxColumn10.MinimumWidth = 8;
-            this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
-            // 
-            // dataGridViewTextBoxColumn11
-            // 
-            this.dataGridViewTextBoxColumn11.HeaderText = "Tên Nhân Viên";
-            this.dataGridViewTextBoxColumn11.MinimumWidth = 8;
-            this.dataGridViewTextBoxColumn11.Name = "dataGridViewTextBoxColumn11";
-            // 
-            // NgayTinhCong_BatDau
-            // 
-            this.NgayTinhCong_BatDau.HeaderText = "Ngày Tính Công (Bắt đầu)";
-            this.NgayTinhCong_BatDau.MinimumWidth = 8;
-            this.NgayTinhCong_BatDau.Name = "NgayTinhCong_BatDau";
+            this.dataGridView_ChamCong.DefaultCellStyle = dataGridViewCellStyle9;
+            this.dataGridView_ChamCong.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
+            this.dataGridView_ChamCong.Location = new System.Drawing.Point(8, 42);
+            this.dataGridView_ChamCong.Name = "dataGridView_ChamCong";
+            this.dataGridView_ChamCong.RowHeadersVisible = false;
+            this.dataGridView_ChamCong.RowHeadersWidth = 62;
+            this.dataGridView_ChamCong.RowTemplate.Height = 28;
+            this.dataGridView_ChamCong.Size = new System.Drawing.Size(1388, 339);
+            this.dataGridView_ChamCong.TabIndex = 38;
+            this.dataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.Font = null;
+            this.dataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty;
+            this.dataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = System.Drawing.Color.Empty;
+            this.dataGridView_ChamCong.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = System.Drawing.Color.Empty;
+            this.dataGridView_ChamCong.ThemeStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridView_ChamCong.ThemeStyle.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
+            this.dataGridView_ChamCong.ThemeStyle.HeaderStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(88)))), ((int)(((byte)(255)))));
+            this.dataGridView_ChamCong.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dataGridView_ChamCong.ThemeStyle.HeaderStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridView_ChamCong.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridView_ChamCong.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+            this.dataGridView_ChamCong.ThemeStyle.HeaderStyle.Height = 4;
+            this.dataGridView_ChamCong.ThemeStyle.ReadOnly = false;
+            this.dataGridView_ChamCong.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridView_ChamCong.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.dataGridView_ChamCong.ThemeStyle.RowsStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridView_ChamCong.ThemeStyle.RowsStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(69)))), ((int)(((byte)(94)))));
+            this.dataGridView_ChamCong.ThemeStyle.RowsStyle.Height = 28;
+            this.dataGridView_ChamCong.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
+            this.dataGridView_ChamCong.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(69)))), ((int)(((byte)(94)))));
             // 
             // textBox2
             // 
@@ -1158,6 +1125,7 @@
             this.radioButton_RealTime2.TabStop = true;
             this.radioButton_RealTime2.Text = "Thời gian hiện tại";
             this.radioButton_RealTime2.UseVisualStyleBackColor = true;
+            this.radioButton_RealTime2.CheckedChanged += new System.EventHandler(this.radioButton_RealTime2_CheckedChanged);
             // 
             // label38
             // 
@@ -1183,6 +1151,7 @@
             this.button_CheckOut.Size = new System.Drawing.Size(183, 51);
             this.button_CheckOut.TabIndex = 0;
             this.button_CheckOut.Text = "Check Out";
+            this.button_CheckOut.Click += new System.EventHandler(this.button_CheckOut_Click_1);
             // 
             // dateTimePicker1
             // 
@@ -1230,6 +1199,7 @@
             this.radioButton_RealTime.TabStop = true;
             this.radioButton_RealTime.Text = "Thời gian hiện tại";
             this.radioButton_RealTime.UseVisualStyleBackColor = true;
+            this.radioButton_RealTime.CheckedChanged += new System.EventHandler(this.radioButton_RealTime_CheckedChanged);
             // 
             // label39
             // 
@@ -1255,6 +1225,7 @@
             this.button_CheckIn.Size = new System.Drawing.Size(183, 51);
             this.button_CheckIn.TabIndex = 0;
             this.button_CheckIn.Text = "Check In";
+            this.button_CheckIn.Click += new System.EventHandler(this.button_CheckIn_Click_1);
             // 
             // label_RealTime
             // 
@@ -1608,6 +1579,10 @@
             this.logOutToolStripMenuItem.Size = new System.Drawing.Size(93, 29);
             this.logOutToolStripMenuItem.Text = "Log Out";
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -1617,6 +1592,7 @@
             this.Controls.Add(this.TabControl);
             this.Name = "Main";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Main_Load);
             this.TabControl.ResumeLayout(false);
             this.tabPage_QuanLy.ResumeLayout(false);
             this.tabPage_QuanLy.PerformLayout();
@@ -1631,7 +1607,7 @@
             this.groupBox_phieuluong.PerformLayout();
             this.tabPage_ChamCong.ResumeLayout(false);
             this.tabPage_ChamCong.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DataGridView_ChamCong)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_ChamCong)).EndInit();
             this.panel_ChamCong.ResumeLayout(false);
             this.panel_ChamCong.PerformLayout();
             this.groupBox_CheckOut.ResumeLayout(false);
@@ -1714,11 +1690,6 @@
         private System.Windows.Forms.Button button_Search_ChamCong;
         private System.Windows.Forms.TextBox textBox_Search_ChamCong;
         private System.Windows.Forms.TabPage tabPage_ChamCong;
-        private Guna.UI2.WinForms.Guna2DataGridView DataGridView_ChamCong;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Ma_ChamCong;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn11;
-        private System.Windows.Forms.DataGridViewTextBoxColumn NgayTinhCong_BatDau;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.Panel panel_ChamCong;
@@ -1769,6 +1740,7 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logOutToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
+        private Guna.UI2.WinForms.Guna2DataGridView dataGridView_ChamCong;
     }
 }
 

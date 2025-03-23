@@ -16,6 +16,7 @@ namespace GUI
     {
         private NhanVienBLL bll = new NhanVienBLL();
         private LuongBLL luongBLL = new LuongBLL();
+        private ChamCongBLL chamCongBLL = new ChamCongBLL();
 
         public Main()
         {
@@ -165,6 +166,120 @@ namespace GUI
             {
                 MessageBox.Show("Thêm nhân viên thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            label_RealTime.Text = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy");
+        }
+        
+        private void button_CheckIn_Click(object sender, EventArgs e)
+        {
+            if (dataGridView_ChamCong.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn nhân viên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string maNV = dataGridView_ChamCong.SelectedRows[0].Cells["MaNV"].Value.ToString();
+            string tenNV = dataGridView_ChamCong.SelectedRows[0].Cells["TenNV"].Value.ToString();
+            DateTime ngayCC = DateTime.Now.Date;
+            TimeSpan tgVao = radioButton_RealTime.Checked ? DateTime.Now.TimeOfDay : dateTimePicker1.Value.TimeOfDay;
+
+            var chamCong = new ChamCongDTO
+            {
+                MaCC = Guid.NewGuid().ToString(), // Sinh mã chấm công tự động
+                MaNV = maNV,
+                TenNV = tenNV,
+                NgayCC = ngayCC,
+                TGVao = tgVao,
+                TrangThai = "Chưa check-out"
+            };
+
+            if (chamCongBLL.CheckIn(chamCong))
+            {
+                MessageBox.Show($"Check-In thành công lúc {tgVao}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadData();
+            }
+            else
+            {
+                MessageBox.Show("Nhân viên đã Check-In hôm nay!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button_CheckOut_Click(object sender, EventArgs e)
+        {
+            if (dataGridView_ChamCong.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn nhân viên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string maNV = dataGridView_ChamCong.SelectedRows[0].Cells["MaNV"].Value.ToString();
+            DateTime ngayCC = DateTime.Now.Date;
+            TimeSpan tgRa = radioButton_RealTime2.Checked ? DateTime.Now.TimeOfDay : dateTimePicker2.Value.TimeOfDay;
+
+            if (chamCongBLL.CheckOut(maNV, ngayCC, tgRa))
+            {
+                MessageBox.Show($"Check-Out thành công lúc {tgRa}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadData();
+            }
+            else
+            {
+                MessageBox.Show("Check-Out thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+            timer1.Interval = 1000; // Cập nhật mỗi giây
+            timer1.Tick += timer1_Tick;
+            timer1.Start();
+            // Mặc định chọn thời gian hiện tại
+            radioButton_RealTime.Checked = true;
+            radioButton_RealTime2.Checked = true;
+            dateTimePicker1.Enabled = false; // Ẩn chọn tay
+            dateTimePicker2.Enabled = false; // Ẩn chọn tay
+        }
+
+        private void radioButton_RealTime_CheckedChanged(object sender, EventArgs e)
+        {
+            dateTimePicker1.Enabled = !radioButton_RealTime.Checked; // Tắt nếu chọn "Thời gian hiện tại"
+        }
+
+        private void radioButton_RealTime2_CheckedChanged(object sender, EventArgs e)
+        {
+            dateTimePicker2.Enabled = !radioButton_RealTime2.Checked; // Tắt nếu chọn "Thời gian hiện tại"
+        }
+
+        private void button_CheckIn_Click_1(object sender, EventArgs e)
+        {
+            string checkInTime;
+            if (radioButton_RealTime.Checked)
+            {
+                checkInTime = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy"); // Lấy giờ hiện tại
+            }
+            else
+            {
+                checkInTime = dateTimePicker1.Value.ToString("HH:mm:ss dd/MM/yyyy"); // Lấy giờ từ DateTimePicker
+            }
+
+            MessageBox.Show("Mã nhân viên: \n" + "Tên Nhân Viên: \n" + "Đã check-in lúc: " + checkInTime, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void button_CheckOut_Click_1(object sender, EventArgs e)
+        {
+            string checkInTime;
+            if (radioButton_RealTime2.Checked)
+            {
+                checkInTime = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy"); // Lấy giờ hiện tại
+            }
+            else
+            {
+                checkInTime = dateTimePicker2.Value.ToString("HH:mm:ss dd/MM/yyyy"); // Lấy giờ từ DateTimePicker
+            }
+
+            MessageBox.Show("Mã nhân viên: \n" + "Tên Nhân Viên: \n" + "Đã check-out lúc: " + checkInTime, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

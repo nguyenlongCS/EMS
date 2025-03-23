@@ -3,36 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\thanh\\source\\repos\\EMS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{98D7E1B6-B1D0-4262-B2DF-3A5323403159}|GUI\\GUI.csproj|c:\\users\\thanh\\source\\repos\\ems\\gui\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{98D7E1B6-B1D0-4262-B2DF-3A5323403159}|GUI\\GUI.csproj|solutionrelative:gui\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{98D7E1B6-B1D0-4262-B2DF-3A5323403159}|GUI\\GUI.csproj|C:\\Users\\thanh\\source\\repos\\EMS\\GUI\\Main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{98D7E1B6-B1D0-4262-B2DF-3A5323403159}|GUI\\GUI.csproj|solutionrelative:GUI\\Main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{98D7E1B6-B1D0-4262-B2DF-3A5323403159}|GUI\\GUI.csproj|c:\\users\\thanh\\source\\repos\\ems\\gui\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{98D7E1B6-B1D0-4262-B2DF-3A5323403159}|GUI\\GUI.csproj|solutionrelative:gui\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EC3A4BAA-D115-4B1F-A696-D400372E8B0C}|BLL\\BLL.csproj|c:\\users\\thanh\\source\\repos\\ems\\bll\\nhanvienbll.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EC3A4BAA-D115-4B1F-A696-D400372E8B0C}|BLL\\BLL.csproj|solutionrelative:bll\\nhanvienbll.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DD7737EF-83FA-4355-A717-A5EBB3945267}|DAL\\DAL.csproj|c:\\users\\thanh\\source\\repos\\ems\\dal\\nhanviendal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DD7737EF-83FA-4355-A717-A5EBB3945267}|DAL\\DAL.csproj|solutionrelative:dal\\nhanviendal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D1698BDC-BDA7-4198-A61F-DBFAB2191D5E}|DTO\\DTO.csproj|c:\\users\\thanh\\source\\repos\\ems\\dto\\nhanviendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D1698BDC-BDA7-4198-A61F-DBFAB2191D5E}|DTO\\DTO.csproj|solutionrelative:dto\\nhanviendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EC3A4BAA-D115-4B1F-A696-D400372E8B0C}|BLL\\BLL.csproj|c:\\users\\thanh\\source\\repos\\ems\\bll\\luongbll.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EC3A4BAA-D115-4B1F-A696-D400372E8B0C}|BLL\\BLL.csproj|solutionrelative:bll\\luongbll.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D1698BDC-BDA7-4198-A61F-DBFAB2191D5E}|DTO\\DTO.csproj|c:\\users\\thanh\\source\\repos\\ems\\dto\\luongdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D1698BDC-BDA7-4198-A61F-DBFAB2191D5E}|DTO\\DTO.csproj|solutionrelative:dto\\luongdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{DD7737EF-83FA-4355-A717-A5EBB3945267}|DAL\\DAL.csproj|c:\\users\\thanh\\source\\repos\\ems\\dal\\luongdal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DD7737EF-83FA-4355-A717-A5EBB3945267}|DAL\\DAL.csproj|solutionrelative:dal\\luongdal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EC3A4BAA-D115-4B1F-A696-D400372E8B0C}|BLL\\BLL.csproj|c:\\users\\thanh\\source\\repos\\ems\\bll\\chamcongbll.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EC3A4BAA-D115-4B1F-A696-D400372E8B0C}|BLL\\BLL.csproj|solutionrelative:bll\\chamcongbll.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DD7737EF-83FA-4355-A717-A5EBB3945267}|DAL\\DAL.csproj|c:\\users\\thanh\\source\\repos\\ems\\dal\\chamcongdal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DD7737EF-83FA-4355-A717-A5EBB3945267}|DAL\\DAL.csproj|solutionrelative:dal\\chamcongdal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D1698BDC-BDA7-4198-A61F-DBFAB2191D5E}|DTO\\DTO.csproj|c:\\users\\thanh\\source\\repos\\ems\\dto\\chamcongdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D1698BDC-BDA7-4198-A61F-DBFAB2191D5E}|DTO\\DTO.csproj|solutionrelative:dto\\chamcongdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -52,7 +44,7 @@
               "RelativeDocumentMoniker": "GUI\\Main.cs",
               "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\GUI\\Main.cs",
               "RelativeToolTip": "GUI\\Main.cs",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAwwIUAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAP8AAAAAAAAAAAAEwAwBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-20T07:50:27.966Z",
               "IsPinned": true,
@@ -73,80 +65,54 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "LuongBLL.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\BLL\\LuongBLL.cs",
-              "RelativeDocumentMoniker": "BLL\\LuongBLL.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\BLL\\LuongBLL.cs",
-              "RelativeToolTip": "BLL\\LuongBLL.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-20T08:03:43.32Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "LuongDAL.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\DAL\\LuongDAL.cs",
-              "RelativeDocumentMoniker": "DAL\\LuongDAL.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\DAL\\LuongDAL.cs",
-              "RelativeToolTip": "DAL\\LuongDAL.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-20T08:03:08.666Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "NhanVienDAL.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\DAL\\NhanVienDAL.cs",
-              "RelativeDocumentMoniker": "DAL\\NhanVienDAL.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\DAL\\NhanVienDAL.cs",
-              "RelativeToolTip": "DAL\\NhanVienDAL.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAQwEMAAAAAAAAAAAAAAA==",
+              "Title": "ChamCongBLL.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\BLL\\ChamCongBLL.cs",
+              "RelativeDocumentMoniker": "BLL\\ChamCongBLL.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\BLL\\ChamCongBLL.cs",
+              "RelativeToolTip": "BLL\\ChamCongBLL.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-20T07:48:09.39Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "NhanVienDTO.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\DTO\\NhanVienDTO.cs",
-              "RelativeDocumentMoniker": "DTO\\NhanVienDTO.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\DTO\\NhanVienDTO.cs",
-              "RelativeToolTip": "DTO\\NhanVienDTO.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-20T08:37:01.051Z",
+              "WhenOpened": "2025-03-20T16:22:24.274Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "NhanVienBLL.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\BLL\\NhanVienBLL.cs",
-              "RelativeDocumentMoniker": "BLL\\NhanVienBLL.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\BLL\\NhanVienBLL.cs",
-              "RelativeToolTip": "BLL\\NhanVienBLL.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAQAAAAdAAAAAAAAAA==",
+              "Title": "LuongDAL.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\DAL\\LuongDAL.cs",
+              "RelativeDocumentMoniker": "DAL\\LuongDAL.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\DAL\\LuongDAL.cs",
+              "RelativeToolTip": "DAL\\LuongDAL.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAYwA0AAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-20T07:43:54.736Z",
+              "WhenOpened": "2025-03-20T16:21:44.89Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "LuongDTO.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\DTO\\LuongDTO.cs",
-              "RelativeDocumentMoniker": "DTO\\LuongDTO.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\DTO\\LuongDTO.cs",
-              "RelativeToolTip": "DTO\\LuongDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "ChamCongDAL.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\DAL\\ChamCongDAL.cs",
+              "RelativeDocumentMoniker": "DAL\\ChamCongDAL.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\DAL\\ChamCongDAL.cs",
+              "RelativeToolTip": "DAL\\ChamCongDAL.cs",
+              "ViewState": "AgIAAEcAAAAAAAAAAAAgwAYAAAByAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-20T08:13:24.974Z",
+              "WhenOpened": "2025-03-20T16:21:26.325Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ChamCongDTO.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\EMS\\DTO\\ChamCongDTO.cs",
+              "RelativeDocumentMoniker": "DTO\\ChamCongDTO.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\EMS\\DTO\\ChamCongDTO.cs",
+              "RelativeToolTip": "DTO\\ChamCongDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-20T16:19:41.634Z",
               "EditorCaption": ""
             }
           ]
