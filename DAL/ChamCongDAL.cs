@@ -1,83 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using BTL_LTCSDL.DTO;
 
-public class ChamCongDAL
+namespace BTL_LTCSDL.DAL
 {
-    private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security=True;";
-
-    // Check-In
-    public bool CheckIn(ChamCongDTO chamCong)
+    public class ChamCongDAL
     {
-        using (SqlConnection conn = new SqlConnection(connectionString))
+        private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security=True;";
+
+        public List<ChamCongDTO> GetAllChamCong()
         {
-            conn.Open();
-            string query = @"
-                INSERT INTO ChamCong (MaCC, MaNV, TenNV, NgayCC, TGVao, TrangThai) 
-                VALUES (@MaCC, @MaNV, @TenNV, @NgayCC, @TGVao, 'Chưa check-out')";
-
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@MaCC", chamCong.MaCC);
-                cmd.Parameters.AddWithValue("@MaNV", chamCong.MaNV);
-                cmd.Parameters.AddWithValue("@TenNV", chamCong.TenNV);
-                cmd.Parameters.AddWithValue("@NgayCC", chamCong.NgayCC);
-                cmd.Parameters.AddWithValue("@TGVao", chamCong.TGVao ?? (object)DBNull.Value);
-
-                return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-    }
-
-    // Check-Out
-    public bool CheckOut(string maNV, DateTime ngayCC, TimeSpan tgRa)
-    {
-        using (SqlConnection conn = new SqlConnection(connectionString))
-        {
-            conn.Open();
-            string query = @"
-                UPDATE ChamCong SET TGRa = @TGRa, TrangThai = 'Đầy đủ'
-                WHERE MaNV = @MaNV AND NgayCC = @NgayCC";
-
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@MaNV", maNV);
-                cmd.Parameters.AddWithValue("@NgayCC", ngayCC);
-                cmd.Parameters.AddWithValue("@TGRa", tgRa);
-
-                return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-    }
-
-    // Lấy danh sách chấm công
-    public List<ChamCongDTO> GetChamCong()
-    {
-        List<ChamCongDTO> danhSachChamCong = new List<ChamCongDTO>();
-
-        using (SqlConnection conn = new SqlConnection(connectionString))
-        {
-            conn.Open();
+            var list = new List<ChamCongDTO>();
             string query = "SELECT * FROM ChamCong";
 
+            using (SqlConnection conn = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
-            using (SqlDataReader reader = cmd.ExecuteReader())
             {
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+
                 while (reader.Read())
                 {
-                    danhSachChamCong.Add(new ChamCongDTO
+                    list.Add(new ChamCongDTO
                     {
                         MaCC = reader["MaCC"].ToString(),
                         MaNV = reader["MaNV"].ToString(),
-                        TenNV = reader["TenNV"].ToString(),
                         NgayCC = Convert.ToDateTime(reader["NgayCC"]),
-                        TGVao = reader["TGVao"] as TimeSpan?,
-                        TGRa = reader["TGRa"] as TimeSpan?,
-                        TrangThai = reader["TrangThai"].ToString()
+                        TGVao = reader["TGVao"] != DBNull.Value ? (TimeSpan?)reader["TGVao"] : null,
+                        TGRa = reader["TGRa"] != DBNull.Value ? (TimeSpan?)reader["TGRa"] : null,
+                        TGVaoTangCa = reader["TGVaoTangCa"] != DBNull.Value ? (TimeSpan?)reader["TGVaoTangCa"] : null,
+                        TGRaTangCa = reader["TGRaTangCa"] != DBNull.Value ? (TimeSpan?)reader["TGRaTangCa"] : null,
+                        TrangThai = reader["TrangThai"].ToString(),
+                        VangCoPhep = reader["VangCoPhep"] != DBNull.Value ? Convert.ToInt32(reader["VangCoPhep"]) : 0
                     });
                 }
             }
+
+            return list;
         }
-        return danhSachChamCong;
+
+        // Các hàm khác như: InsertChamCong, UpdateChamCong, DeleteChamCong nếu cần thêm
     }
 }

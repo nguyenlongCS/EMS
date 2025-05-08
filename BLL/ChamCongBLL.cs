@@ -1,31 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BTL_LTCSDL.DTO;
+using BTL_LTCSDL.DAL;
 
-public class ChamCongBLL
+namespace BTL_LTCSDL.BLL
 {
-    private ChamCongDAL chamCongDAL = new ChamCongDAL();
-
-    public bool CheckIn(ChamCongDTO chamCong)
+    public class ChamCongBLL
     {
-        // Kiểm tra xem nhân viên đã check-in trong ngày chưa
-        List<ChamCongDTO> danhSach = chamCongDAL.GetChamCong();
-        foreach (var cc in danhSach)
+        private ChamCongDAL dal = new ChamCongDAL();
+
+        public List<ChamCongDTO> GetDanhSachChamCong()
         {
-            if (cc.MaNV == chamCong.MaNV && cc.NgayCC == chamCong.NgayCC)
-            {
-                return false; // Đã check-in rồi
-            }
+            return dal.GetAllChamCong();
         }
-        return chamCongDAL.CheckIn(chamCong);
-    }
 
-    public bool CheckOut(string maNV, DateTime ngayCC, TimeSpan tgRa)
-    {
-        return chamCongDAL.CheckOut(maNV, ngayCC, tgRa);
-    }
-
-    public List<ChamCongDTO> GetChamCong()
-    {
-        return chamCongDAL.GetChamCong();
+        // Các hàm xử lý logic nâng cao có thể thêm ở đây
     }
 }

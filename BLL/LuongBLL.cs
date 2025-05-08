@@ -1,5 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BTL_LTCSDL.DAL;
+using BTL_LTCSDL.DTO;
 
 public class LuongBLL
 {

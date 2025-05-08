@@ -21,80 +21,24 @@ namespace GUI
         public Main()
         {
             InitializeComponent();
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
             SetupDataGridView();
-            LoadData();
-            LoadData_TinhLuong();
+            LoadNhanVienData();
+            LoadTinhLuongData();
+            LoadChamCongData();
         }
 
-        private void LoadData()
-        {
-            dataGridView1.Rows.Clear();
-            dataGridView_DSNV.Rows.Clear();
-            foreach (var nv in bll.GetAllNhanVien())
-            {
-                dataGridView1.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.DiaChi, nv.SoDT, nv.Email,
-                                       nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
-                                       nv.CCCD, nv.ChucVu, nv.MaPB);
-                dataGridView_DSNV.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.DiaChi, nv.SoDT, nv.Email,
-                                       nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
-                                       nv.CCCD, nv.ChucVu, nv.MaPB);
-            }
-        }
-        private void LoadData_TinhLuong()
-        {
-            List<LuongDTO> danhSach = luongBLL.GetDanhSachLuong();
-
-            if (DataGridView_DSNV_Luong.Columns.Count == 0) // Kiểm tra nếu chưa có cột
-            {
-                SetupDataGridView();
-            }
-
-            DataGridView_DSNV_Luong.Rows.Clear(); // Xóa dữ liệu cũ
-
-            foreach (var luong in danhSach)
-            {
-                DataGridView_DSNV_Luong.Rows.Add(
-                    luong.MaNV,
-                    luong.TenNV,
-                    luong.MaLuong,
-                    luong.NgayXetLuong.ToString("dd/MM/yyyy"),
-                    luong.LuongNhanDuoc.ToString("N0") + " VNĐ"
-                );
-            }
-        }
-
-        private void DataGridView_DSNV_Luong_SelectionChanged_1(object sender, EventArgs e)
-        {
-            if (DataGridView_DSNV_Luong.SelectedRows.Count > 0)
-            {
-                string maNV = DataGridView_DSNV_Luong.SelectedRows[0].Cells["MaNV"].Value.ToString();
-                LoadLuongChiTiet(maNV);
-            }
-
-        }
-
-        private void LoadLuongChiTiet(string maNV)
-        {
-            DataRow row = luongBLL.GetLuongChiTiet(maNV);
-            if (row != null)
-            {
-                label_SoGioLam.Text = row["SoGioLam"].ToString();
-                label_SoNgayNghi.Text = row["SoNgayNghi"].ToString();
-                label_SoGioDiTre.Text = row["SoGioTre"].ToString();
-                label_LuongCanban.Text = double.Parse(row["LuongCanBanTheoBac"].ToString()).ToString("N0");
-                label_BacLuong.Text = row["BacLuong"].ToString();
-                label_SoGioTangCa.Text = row["SoGioTangCa"].ToString();
-                label_TroCap.Text = double.Parse(row["TroCap"].ToString()).ToString("N0");
-                label_TamUng.Text = double.Parse(row["TamUng"].ToString()).ToString("N0");
-                label_LuongNhanDuoc.Text = $"{double.Parse(row["LuongNhanDuoc"].ToString()):N0} VNĐ";
-            }
-        }
+        #region Thiết lập điều khiển
 
         private void SetupDataGridView()
         {
+            // Thiết lập DataGridView Nhân viên
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.AllowUserToAddRows = false; // Không cho phép thêm dòng trống
+            dataGridView1.AllowUserToAddRows = false;
             dataGridView1.Columns.Clear();
             dataGridView1.Columns.Add("MaNV", "Mã NV");
             dataGridView1.Columns.Add("TenNV", "Tên Nhân Viên");
@@ -107,6 +51,7 @@ namespace GUI
             dataGridView1.Columns.Add("ChucVu", "Chức Vụ");
             dataGridView1.Columns.Add("MaPB", "Mã PB");
 
+            // Thiết lập DataGridView DSNV
             dataGridView_DSNV.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView_DSNV.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView_DSNV.AllowUserToAddRows = false;
@@ -122,18 +67,61 @@ namespace GUI
             dataGridView_DSNV.Columns.Add("ChucVu", "Chức Vụ");
             dataGridView_DSNV.Columns.Add("MaPB", "Mã PB");
 
+            // Thiết lập DataGridView Danh sách nhân viên lương
             DataGridView_DSNV_Luong.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             DataGridView_DSNV_Luong.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             DataGridView_DSNV_Luong.AllowUserToAddRows = false;
             DataGridView_DSNV_Luong.Columns.Clear();
+            DataGridView_DSNV_Luong.Columns.Add("MaNV", "Mã NV");
+            DataGridView_DSNV_Luong.Columns.Add("TenNV", "Tên Nhân Viên");
+            DataGridView_DSNV_Luong.Columns.Add("MaLuong", "Mã Lương");
+            DataGridView_DSNV_Luong.Columns.Add("NgayXetLuong", "Ngày Xét Lương");
+            DataGridView_DSNV_Luong.Columns.Add("LuongNhanDuoc", "Lương Nhận Được");
 
-            DataGridView_DSNV_Luong.Columns.Add("MaNV", "Mã NV"); // Lấy từ bảng Luong
-            DataGridView_DSNV_Luong.Columns.Add("TenNV", "Tên Nhân Viên"); // Lấy từ bảng NhanVien
-            DataGridView_DSNV_Luong.Columns.Add("MaLuong", "Mã Lương"); // Lấy từ bảng Luong
-            DataGridView_DSNV_Luong.Columns.Add("NgayXetLuong", "Ngày Xét Lương"); // Lấy từ bảng Luong
-            DataGridView_DSNV_Luong.Columns.Add("LuongNhanDuoc", "Lương Nhận Được"); // Lấy từ bảng TinhLuong
+            // Thiết lập DataGridView Chấm công
+            dataGridView_ChamCong.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView_ChamCong.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView_ChamCong.AllowUserToAddRows = false;
+            dataGridView_ChamCong.Columns.Clear();
+            dataGridView_ChamCong.Columns.Add("MaCC", "Mã CC");
+            dataGridView_ChamCong.Columns.Add("MaNV", "Mã Nhân Viên");
+            dataGridView_ChamCong.Columns.Add("NgayCC", "Ngày Chấm Công");
+            dataGridView_ChamCong.Columns.Add("TGVao", "Thời Gian Vào");
+            dataGridView_ChamCong.Columns.Add("TGRa", "Thời Gian Ra");
+            dataGridView_ChamCong.Columns.Add("TGVaoTangCa", "TG Vào Tăng Ca");
+            dataGridView_ChamCong.Columns.Add("TGRaTangCa", "TG Ra Tăng Ca");
+            dataGridView_ChamCong.Columns.Add("TrangThai", "Trạng Thái");
+            dataGridView_ChamCong.Columns.Add("VangCoPhep", "Vắng Có Phép");
         }
 
+
+
+
+        #endregion
+
+        #region Quản lý Nhân viên
+
+        private void LoadNhanVienData()
+        {
+            try
+            {
+                dataGridView1.Rows.Clear();
+                dataGridView_DSNV.Rows.Clear();
+                foreach (var nv in bll.GetAllNhanVien())
+                {
+                    dataGridView1.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.DiaChi, nv.SoDT, nv.Email,
+                                           nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
+                                           nv.CCCD, nv.ChucVu, nv.MaPB);
+                    dataGridView_DSNV.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.DiaChi, nv.SoDT, nv.Email,
+                                           nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
+                                           nv.CCCD, nv.ChucVu, nv.MaPB);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu Nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void button_Show_Click(object sender, EventArgs e)
         {
@@ -142,144 +130,147 @@ namespace GUI
 
         private void button_Add_Click_1(object sender, EventArgs e)
         {
-            var nv = new NhanVienDTO
+            try
             {
-                MaNV = textBox_Employeed.Text,
-                HoNV = textBox_Surname.Text,
-                TenNV = textBox_Name.Text,
-                DiaChi = textBox_DiaChi.Text,
-                SoDT = textBox_SDT.Text,
-                Email = textBox_email.Text,
-                NgaySinh = dateTime_DateOfBirth.Value,
-                GioiTinh = radioBut_Male.Checked,
-                CCCD = textBox_CCCD.Text,
-                ChucVu = textBox_ChucVu.Text,
-                MaPB = textBox_MaPhongBan.Text
-            };
+                var nv = new NhanVienDTO
+                {
+                    MaNV = textBox_Employeed.Text,
+                    HoNV = textBox_Surname.Text,
+                    TenNV = textBox_Name.Text,
+                    DiaChi = textBox_DiaChi.Text,
+                    SoDT = textBox_SDT.Text,
+                    Email = textBox_email.Text,
+                    NgaySinh = dateTime_DateOfBirth.Value,
+                    GioiTinh = radioBut_Male.Checked,
+                    CCCD = textBox_CCCD.Text,
+                    ChucVu = textBox_ChucVu.Text,
+                    MaPB = textBox_MaPhongBan.Text
+                };
 
-            if (bll.InsertNhanVien(nv))
-            {
-                MessageBox.Show("Thêm nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
+                if (bll.InsertNhanVien(nv))
+                {
+                    MessageBox.Show("Thêm nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadNhanVienData();
+                }
+                else
+                {
+                    MessageBox.Show("Thêm nhân viên thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Thêm nhân viên thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi khi thêm nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        #endregion
+
+        #region Quản lý Lương
+
+        private void LoadTinhLuongData()
         {
-            label_RealTime.Text = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy");
+            try
+            {
+                List<LuongDTO> danhSach = luongBLL.GetDanhSachLuong();
+                if (DataGridView_DSNV_Luong.Columns.Count == 0)
+                {
+                    SetupDataGridView();
+                }
+                DataGridView_DSNV_Luong.Rows.Clear();
+                foreach (var luong in danhSach)
+                {
+                    DataGridView_DSNV_Luong.Rows.Add(
+                        luong.MaNV,
+                        luong.TenNV,
+                        luong.MaLuong,
+                        luong.NgayXetLuong.ToString("dd/MM/yyyy"),
+                        luong.LuongNhanDuoc.ToString("N0") + " VNĐ"
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu Lương: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
-        
-        private void button_CheckIn_Click(object sender, EventArgs e)
+
+        private void DataGridView_DSNV_Luong_SelectionChanged_1(object sender, EventArgs e)
         {
-            if (dataGridView_ChamCong.SelectedRows.Count == 0)
+            try
             {
-                MessageBox.Show("Vui lòng chọn nhân viên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                if (DataGridView_DSNV_Luong.SelectedRows.Count > 0)
+                {
+                    string maNV = DataGridView_DSNV_Luong.SelectedRows[0].Cells["MaNV"].Value.ToString();
+                    LoadLuongChiTiet(maNV);
+                }
             }
-
-            string maNV = dataGridView_ChamCong.SelectedRows[0].Cells["MaNV"].Value.ToString();
-            string tenNV = dataGridView_ChamCong.SelectedRows[0].Cells["TenNV"].Value.ToString();
-            DateTime ngayCC = DateTime.Now.Date;
-            TimeSpan tgVao = radioButton_RealTime.Checked ? DateTime.Now.TimeOfDay : dateTimePicker1.Value.TimeOfDay;
-
-            var chamCong = new ChamCongDTO
+            catch (Exception ex)
             {
-                MaCC = Guid.NewGuid().ToString(), // Sinh mã chấm công tự động
-                MaNV = maNV,
-                TenNV = tenNV,
-                NgayCC = ngayCC,
-                TGVao = tgVao,
-                TrangThai = "Chưa check-out"
-            };
-
-            if (chamCongBLL.CheckIn(chamCong))
-            {
-                MessageBox.Show($"Check-In thành công lúc {tgVao}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
-            }
-            else
-            {
-                MessageBox.Show("Nhân viên đã Check-In hôm nay!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi khi chọn dòng Lương: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void button_CheckOut_Click(object sender, EventArgs e)
+        private void LoadLuongChiTiet(string maNV)
         {
-            if (dataGridView_ChamCong.SelectedRows.Count == 0)
+            try
             {
-                MessageBox.Show("Vui lòng chọn nhân viên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                DataRow row = luongBLL.GetLuongChiTiet(maNV);
+                if (row != null)
+                {
+                    label_SoGioLam.Text = row["SoGioLam"].ToString();
+                    label_SoNgayNghi.Text = row["SoNgayNghi"].ToString();
+                    label_SoGioDiTre.Text = row["SoGioTre"].ToString();
+                    label_LuongCanban.Text = double.Parse(row["LuongCanBanTheoBac"].ToString()).ToString("N0");
+                    label_BacLuong.Text = row["BacLuong"].ToString();
+                    label_SoGioTangCa.Text = row["SoGioTangCa"].ToString();
+                    label_TroCap.Text = double.Parse(row["TroCap"].ToString()).ToString("N0");
+                    label_TamUng.Text = double.Parse(row["TamUng"].ToString()).ToString("N0");
+                    label_LuongNhanDuoc.Text = $"{double.Parse(row["LuongNhanDuoc"].ToString()):N0} VNĐ";
+                }
             }
-
-            string maNV = dataGridView_ChamCong.SelectedRows[0].Cells["MaNV"].Value.ToString();
-            DateTime ngayCC = DateTime.Now.Date;
-            TimeSpan tgRa = radioButton_RealTime2.Checked ? DateTime.Now.TimeOfDay : dateTimePicker2.Value.TimeOfDay;
-
-            if (chamCongBLL.CheckOut(maNV, ngayCC, tgRa))
+            catch (Exception ex)
             {
-                MessageBox.Show($"Check-Out thành công lúc {tgRa}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
-            }
-            else
-            {
-                MessageBox.Show("Check-Out thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi khi tải chi tiết Lương: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void Main_Load(object sender, EventArgs e)
+        #endregion
+
+        #region Quản lý Chấm công
+        private void LoadChamCongData()
         {
-            timer1.Interval = 1000; // Cập nhật mỗi giây
-            timer1.Tick += timer1_Tick;
-            timer1.Start();
-            // Mặc định chọn thời gian hiện tại
-            radioButton_RealTime.Checked = true;
-            radioButton_RealTime2.Checked = true;
-            dateTimePicker1.Enabled = false; // Ẩn chọn tay
-            dateTimePicker2.Enabled = false; // Ẩn chọn tay
-        }
-
-        private void radioButton_RealTime_CheckedChanged(object sender, EventArgs e)
-        {
-            dateTimePicker1.Enabled = !radioButton_RealTime.Checked; // Tắt nếu chọn "Thời gian hiện tại"
-        }
-
-        private void radioButton_RealTime2_CheckedChanged(object sender, EventArgs e)
-        {
-            dateTimePicker2.Enabled = !radioButton_RealTime2.Checked; // Tắt nếu chọn "Thời gian hiện tại"
-        }
-
-        private void button_CheckIn_Click_1(object sender, EventArgs e)
-        {
-            string checkInTime;
-            if (radioButton_RealTime.Checked)
+            try
             {
-                checkInTime = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy"); // Lấy giờ hiện tại
+                var danhSachChamCong = chamCongBLL.GetDanhSachChamCong();
+                dataGridView_ChamCong.Rows.Clear();
+                foreach (var cc in danhSachChamCong)
+                {
+                    dataGridView_ChamCong.Rows.Add(
+                        cc.MaCC,
+                        cc.MaNV,
+                        cc.NgayCC.ToString("dd/MM/yyyy"),
+                        cc.TGVao?.ToString(@"hh\:mm") ?? "",
+                        cc.TGRa?.ToString(@"hh\:mm") ?? "",
+                        cc.TGVaoTangCa?.ToString(@"hh\:mm") ?? "",
+                        cc.TGRaTangCa?.ToString(@"hh\:mm") ?? "",
+                        cc.TrangThai,
+                        cc.VangCoPhep?.ToString() ?? "0"
+                    );
+                }
             }
-            else
+            catch (Exception ex)
             {
-                checkInTime = dateTimePicker1.Value.ToString("HH:mm:ss dd/MM/yyyy"); // Lấy giờ từ DateTimePicker
+                MessageBox.Show($"Lỗi khi tải dữ liệu chấm công: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            MessageBox.Show("Mã nhân viên: \n" + "Tên Nhân Viên: \n" + "Đã check-in lúc: " + checkInTime, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
-        private void button_CheckOut_Click_1(object sender, EventArgs e)
+        private void dataGridView_ChamCong_SelectionChanged(object sender, EventArgs e)
         {
-            string checkInTime;
-            if (radioButton_RealTime2.Checked)
-            {
-                checkInTime = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy"); // Lấy giờ hiện tại
-            }
-            else
-            {
-                checkInTime = dateTimePicker2.Value.ToString("HH:mm:ss dd/MM/yyyy"); // Lấy giờ từ DateTimePicker
-            }
-
-            MessageBox.Show("Mã nhân viên: \n" + "Tên Nhân Viên: \n" + "Đã check-out lúc: " + checkInTime, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //Hàm này tượng tự DataGridView_DSNV_Luong_SelectionChanged_1
         }
+        private void LoadChamCongChiTiet(ChamCongDTO chamCong)
+        {
+            //Hàm này tương tự LoadLuongChiTiet
+        }
+        #endregion
     }
 }
