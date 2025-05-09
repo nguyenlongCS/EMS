@@ -285,8 +285,56 @@ namespace GUI
 
         private void dataGridView_ChamCong_SelectionChanged(object sender, EventArgs e)
         {
-            
+            try
+            {
+                if (dataGridView_ChamCong.SelectedRows.Count > 0)
+                {
+                    var row = dataGridView_ChamCong.SelectedRows[0];
 
+                    // Lấy dữ liệu cơ bản
+                    string maNV = row.Cells["MaNV"].Value?.ToString();
+                    string maCC = row.Cells["MaCC"].Value?.ToString();
+                    DateTime ngayCC = DateTime.ParseExact(row.Cells["NgayCC"].Value.ToString(), "dd/MM/yyyy", null);
+
+                    lbl_MaNV.Text = maNV;
+                    lbl_MaCC.Text = maCC;
+                    lbl_NgayCC.Text = ngayCC.ToString("dd/MM/yyyy");
+
+                    // Chuẩn bị thời gian chuẩn
+                    TimeSpan timeStart = new TimeSpan(8, 0, 0);   // 08:00
+                    TimeSpan timeEnd = new TimeSpan(17, 0, 0);    // 17:00
+
+                    // Lấy và parse thời gian vào/ra
+                    TimeSpan tgVao = TimeSpan.Parse(row.Cells["TGVao"].Value.ToString());
+                    TimeSpan tgRa = TimeSpan.Parse(row.Cells["TGRa"].Value.ToString());
+
+                    // Tính thời gian đi trễ
+                    if (tgVao > timeStart)
+                    {
+                        TimeSpan tre = tgVao - timeStart;
+                        lbl_ThoiGianDiTre.Text = tre.ToString(@"hh\:mm");
+                    }
+                    else
+                    {
+                        lbl_ThoiGianDiTre.Text = "00:00";
+                    }
+
+                    // Tính thời gian về sớm
+                    if (tgRa < timeEnd)
+                    {
+                        TimeSpan veSom = timeEnd - tgRa;
+                        lbl_ThoiGianVeSom.Text = veSom.ToString(@"hh\:mm");
+                    }
+                    else
+                    {
+                        lbl_ThoiGianVeSom.Text = "00:00";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xử lý dữ liệu chấm công: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
 
