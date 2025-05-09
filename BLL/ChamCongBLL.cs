@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using BTL_LTCSDL.DAL;
-using BTL_LTCSDL.DTO;
+﻿using System.Collections.Generic;
 
 public class ChamCongBLL
 {
@@ -18,9 +14,6 @@ public class ChamCongBLL
     public bool InsertChamCong(ChamCongDTO chamCong)
     {
         // Kiểm tra logic trước khi thêm
-        if (string.IsNullOrWhiteSpace(chamCong.MaCC) || string.IsNullOrWhiteSpace(chamCong.MaNV))
-            return false;
-
         return chamCongDAL.InsertChamCong(chamCong);
     }
 }

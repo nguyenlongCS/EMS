@@ -96,8 +96,8 @@ namespace GUI
             dataGridView_ChamCong.Columns.Add("NgayCC", "Ngày Chấm Công");
             dataGridView_ChamCong.Columns.Add("TGVao", "Thời Gian Vào");
             dataGridView_ChamCong.Columns.Add("TGRa", "Thời Gian Ra");
-            dataGridView_ChamCong.Columns.Add("TGVaoTangCa", "TG Vào Tăng Ca");
-            dataGridView_ChamCong.Columns.Add("TGRaTangCa", "TG Ra Tăng Ca");
+            dataGridView_ChamCong.Columns.Add("Vang", "Vắng");
+
         }
 
 
@@ -247,8 +247,8 @@ namespace GUI
         {
             try
             {
-                dataGridView_ChamCong.Rows.Clear(); 
-                List<ChamCongDTO> chamCongList = chamCongBLL.GetDanhSachChamCong(); 
+                dataGridView_ChamCong.Rows.Clear();
+                List<ChamCongDTO> chamCongList = chamCongBLL.GetDanhSachChamCong();
 
                 if (chamCongList.Count == 0)
                 {
@@ -262,10 +262,9 @@ namespace GUI
                         chamCong.MaCC,
                         chamCong.MaNV,
                         chamCong.NgayCC.ToString("dd/MM/yyyy"),
-                        chamCong.TGVao?.ToString(@"hh\:mm") ?? "00:00",
-                        chamCong.TGRa?.ToString(@"hh\:mm") ?? "00:00",
-                        chamCong.TGVaoTangCa?.ToString(@"hh\:mm") ?? "00:00",
-                        chamCong.TGRaTangCa?.ToString(@"hh\:mm") ?? "00:00"
+                        chamCong.TGVao.HasValue ? chamCong.TGVao.Value.ToString(@"hh\:mm") : "-",   // Handling NULL TGVao
+                        chamCong.TGRa.HasValue ? chamCong.TGRa.Value.ToString(@"hh\:mm") : "-",      // Handling NULL TGRa
+                        chamCong.Vang // Vang can be 0, 1, or 2; handle accordingly
                     );
                 }
             }
@@ -276,10 +275,10 @@ namespace GUI
         }
 
 
-        private void LoadChamCongChiTiet(string maNV, DateTime ngayCC)
-        {
+        //private void LoadChamCongChiTiet(string maNV, DateTime ngayCC)
+        //{
             
-        }
+        //}
 
 
 
@@ -305,29 +304,81 @@ namespace GUI
                     TimeSpan timeEnd = new TimeSpan(17, 0, 0);    // 17:00
 
                     // Lấy và parse thời gian vào/ra
-                    TimeSpan tgVao = TimeSpan.Parse(row.Cells["TGVao"].Value.ToString());
-                    TimeSpan tgRa = TimeSpan.Parse(row.Cells["TGRa"].Value.ToString());
+                    TimeSpan tgVao = TimeSpan.Zero;
+                    TimeSpan tgRa = TimeSpan.Zero;
+                    bool isVang = int.TryParse(row.Cells["Vang"].Value.ToString(), out int vang);
 
-                    // Tính thời gian đi trễ
-                    if (tgVao > timeStart)
+                    // Kiểm tra thời gian vào (TGVao) có hợp lệ không (không phải TimeSpan.Zero)
+                    if (row.Cells["TGVao"].Value != null && TimeSpan.TryParse(row.Cells["TGVao"].Value.ToString(), out tgVao) && tgVao != TimeSpan.Zero)
                     {
-                        TimeSpan tre = tgVao - timeStart;
-                        lbl_ThoiGianDiTre.Text = tre.ToString(@"hh\:mm");
+                        // Tính thời gian đi trễ nếu thời gian vào sau 08:00
+                        if (tgVao > timeStart)
+                        {
+                            TimeSpan tre = tgVao - timeStart;
+                            lbl_ThoiGianDiTre.Text = tre.ToString(@"hh\:mm");
+                        }
+                        else
+                        {
+                            lbl_ThoiGianDiTre.Text = "-"; // Không trễ nếu vào trước hoặc đúng 08:00
+                        }
                     }
                     else
                     {
-                        lbl_ThoiGianDiTre.Text = "00:00";
+                        lbl_ThoiGianDiTre.Text = "-";  // Nếu không có thời gian vào hợp lệ
                     }
 
-                    // Tính thời gian về sớm
-                    if (tgRa < timeEnd)
+                    // Kiểm tra thời gian ra (TGRa) có hợp lệ không (không phải TimeSpan.Zero)
+                    if (row.Cells["TGRa"].Value != null && TimeSpan.TryParse(row.Cells["TGRa"].Value.ToString(), out tgRa) && tgRa != TimeSpan.Zero)
                     {
-                        TimeSpan veSom = timeEnd - tgRa;
-                        lbl_ThoiGianVeSom.Text = veSom.ToString(@"hh\:mm");
+                        // Tính thời gian về sớm nếu thời gian ra trước 17:00
+                        if (tgRa < timeEnd)
+                        {
+                            TimeSpan veSom = timeEnd - tgRa;
+                            lbl_ThoiGianVeSom.Text = veSom.ToString(@"hh\:mm");
+                        }
+                        else
+                        {
+                            lbl_ThoiGianVeSom.Text = "-"; // Không về sớm nếu ra đúng hoặc sau 17:00
+                        }
                     }
                     else
                     {
-                        lbl_ThoiGianVeSom.Text = "00:00";
+                        lbl_ThoiGianVeSom.Text = "-";  // Nếu không có thời gian ra hợp lệ
+                    }
+
+                    // Xử lý logic vắng (vắng có phép, vắng không phép, hoặc không vắng)
+                    if (isVang)
+                    {
+                        switch (vang)
+                        {
+                            case 1:
+                                lbl_Vang.Text = "Vắng có phép";
+                                break;
+                            case 2:
+                                lbl_Vang.Text = "Vắng không phép";
+                                break;
+                            default:
+                                lbl_Vang.Text = "Không vắng";
+                                break;
+                        }
+                    }
+
+                    // Kiểm tra trạng thái check-in/check-out
+                    if (tgVao == TimeSpan.Zero && tgRa == TimeSpan.Zero)
+                    {
+                        lbl_TrangThai.Text = "Vắng";
+                    }
+                    else if (tgVao != TimeSpan.Zero && tgRa == TimeSpan.Zero)
+                    {
+                        lbl_TrangThai.Text = "Chưa check-out";
+                    }
+                    else if (tgVao == TimeSpan.Zero && tgRa != TimeSpan.Zero)
+                    {
+                        lbl_TrangThai.Text = "Chưa check-in";
+                    }
+                    else
+                    {
+                        lbl_TrangThai.Text = "Đã check-out";
                     }
                 }
             }
@@ -336,15 +387,6 @@ namespace GUI
                 MessageBox.Show("Lỗi khi xử lý dữ liệu chấm công: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-
-
-
-
-
-        
-        
         #endregion
 
 

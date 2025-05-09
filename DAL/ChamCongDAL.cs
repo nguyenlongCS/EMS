@@ -16,8 +16,8 @@ public class ChamCongDAL
         {
             conn.Open();
             string query = @"
-            SELECT MaCC, MaNV, NgayCC, TGVao, TGRa, TGVaoTangCa, TGRaTangCa
-            FROM ChamCong";
+        SELECT MaCC, MaNV, NgayCC, TGVao, TGRa, Vang
+        FROM ChamCong";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             using (SqlDataReader reader = cmd.ExecuteReader())
@@ -31,14 +31,14 @@ public class ChamCongDAL
                         NgayCC = Convert.ToDateTime(reader["NgayCC"]),
                         TGVao = reader["TGVao"] as TimeSpan?,
                         TGRa = reader["TGRa"] as TimeSpan?,
-                        TGVaoTangCa = reader["TGVaoTangCa"] as TimeSpan?,
-                        TGRaTangCa = reader["TGRaTangCa"] as TimeSpan?
+                        Vang = Convert.ToInt32(reader["Vang"])
                     });
                 }
             }
         }
         return danhSach;
     }
+
 
     // Thêm chấm công mới
     public bool InsertChamCong(ChamCongDTO chamCong)
@@ -47,8 +47,8 @@ public class ChamCongDAL
         {
             conn.Open();
             string query = @"
-            INSERT INTO ChamCong (MaCC, MaNV, NgayCC, TGVao, TGRa, TGVaoTangCa, TGRaTangCa)
-            VALUES (@MaCC, @MaNV, @NgayCC, @TGVao, @TGRa, @TGVaoTangCa, @TGRaTangCa)";
+            INSERT INTO ChamCong (MaCC, MaNV, NgayCC, TGVao, TGRa)
+            VALUES (@MaCC, @MaNV, @NgayCC, @TGVao, @TGRa)";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
@@ -57,8 +57,6 @@ public class ChamCongDAL
                 cmd.Parameters.AddWithValue("@NgayCC", chamCong.NgayCC);
                 cmd.Parameters.AddWithValue("@TGVao", chamCong.TGVao.HasValue ? (object)chamCong.TGVao.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("@TGRa", chamCong.TGRa.HasValue ? (object)chamCong.TGRa.Value : DBNull.Value);
-                cmd.Parameters.AddWithValue("@TGVaoTangCa", chamCong.TGVaoTangCa.HasValue ? (object)chamCong.TGVaoTangCa.Value : DBNull.Value);
-                cmd.Parameters.AddWithValue("@TGRaTangCa", chamCong.TGRaTangCa.HasValue ? (object)chamCong.TGRaTangCa.Value : DBNull.Value);
 
                 return cmd.ExecuteNonQuery() > 0; // Trả về true nếu thêm thành công
             }
