@@ -61,5 +61,26 @@ public class ChamCongDAL
                 return cmd.ExecuteNonQuery() > 0; // Trả về true nếu thêm thành công
             }
         }
+
     }
+    public bool UpdateChamCong(ChamCongDTO chamCong)
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            conn.Open();
+            string query = @"
+        UPDATE ChamCong
+        SET TGRa = @TGRa
+        WHERE MaCC = @MaCC";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@TGRa", chamCong.TGRa);
+                cmd.Parameters.AddWithValue("@MaCC", chamCong.MaCC);
+
+                return cmd.ExecuteNonQuery() > 0; // Return true if update is successful
+            }
+        }
+    }
+
 }

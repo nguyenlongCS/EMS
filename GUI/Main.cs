@@ -21,6 +21,15 @@ namespace GUI
         public Main()
         {
             InitializeComponent();
+            // Set kích thước cố định
+            this.Width = 1150;
+            this.Height = 600;
+
+            // Tắt resize
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;//ép form không được kéo giãn.
+
+            this.StartPosition = FormStartPosition.CenterScreen;
+
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -29,6 +38,7 @@ namespace GUI
             LoadNhanVienData();
             LoadTinhLuongData();
             LoadChamCongData();
+            LoadMaNV();// Phan nay them vao de ComBoBox hiện danh sách mã nhân viên(Long)
             // Khởi tạo timer để cập nhật thời gian hiện tại
             timer1.Interval = 1000; // 1 giây
             timer1.Tick += timer1_Tick;
@@ -168,6 +178,39 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi thêm nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void LoadMaNV()
+        {
+            try
+            {
+                // Gọi NhanVienBLL để lấy danh sách Mã Nhân Viên
+                List<string> maNhanVienList = bll.GetAllMaNhanVien();  // bll là đối tượng của NhanVienBLL
+                cbb_MaNV.Items.Clear();  // Xóa hết các mục trong ComboBox trước khi thêm
+
+                // Kiểm tra xem có mã nhân viên nào không
+                if (maNhanVienList.Count == 0)
+                {
+                    MessageBox.Show("Không có mã nhân viên nào.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                // Thêm tất cả mã nhân viên vào ComboBox
+                foreach (var maNV in maNhanVienList)
+                {
+                    cbb_MaNV.Items.Add(maNV);  // Thêm Mã Nhân Viên vào ComboBox
+                }
+
+                // Chọn mã nhân viên đầu tiên nếu có
+                if (cbb_MaNV.Items.Count > 0)
+                {
+                    cbb_MaNV.SelectedIndex = 0;  // Chọn item đầu tiên
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải mã nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
 
         #endregion
 
@@ -387,8 +430,113 @@ namespace GUI
                 MessageBox.Show("Lỗi khi xử lý dữ liệu chấm công: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        
+
+        private void button_CheckIn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Get selected MaNV from ComboBox
+                string maNV = cbb_MaNV.SelectedItem.ToString();
+                DateTime ngayHienTai = DateTime.Now.Date; // Get today's date
+                TimeSpan tgVao = DateTime.Now.TimeOfDay;  // Get current time for TGVao
+
+                // Check if the employee has already checked in today
+                var chamCongList = chamCongBLL.GetDanhSachChamCong();
+                var existingRecord = chamCongList.FirstOrDefault(cc => cc.MaNV == maNV && cc.NgayCC.Date == ngayHienTai);
+
+                if (existingRecord != null)
+                {
+                    MessageBox.Show("Bạn đã check-in hôm nay rồi.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return; // Exit if already checked in
+                }
+
+                // Create new attendance record (MaCC in the format CCXXX)
+                string maCC = "CC" + (chamCongList.Count + 1).ToString("D3"); // Generate MaCC
+
+                // Create ChamCongDTO object for the new record
+                ChamCongDTO chamCongDTO = new ChamCongDTO
+                {
+                    MaCC = maCC,
+                    MaNV = maNV,
+                    NgayCC = ngayHienTai,
+                    TGVao = tgVao,
+                    Vang = 0 // Default to not absent
+                };
+
+                // Insert the new record into the database
+                bool success = chamCongBLL.InsertChamCong(chamCongDTO);
+
+                if (success)
+                {
+                    MessageBox.Show("Check-in thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadChamCongData();  // Reload the attendance data
+                }
+                else
+                {
+                    MessageBox.Show("Lỗi khi check-in!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thực hiện Check-in: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button_CheckOut_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Get selected MaNV from ComboBox
+                string maNV = cbb_MaNV.SelectedItem.ToString();
+                DateTime ngayHienTai = DateTime.Now.Date; // Get today's date
+                TimeSpan tgRa = DateTime.Now.TimeOfDay;  // Get current time for TGRa
+
+                // Check if the employee has already checked in today
+                var chamCongList = chamCongBLL.GetDanhSachChamCong();
+                var existingRecord = chamCongList.FirstOrDefault(cc => cc.MaNV == maNV && cc.NgayCC.Date == ngayHienTai && cc.TGVao.HasValue && !cc.TGRa.HasValue);
+
+                if (existingRecord == null)
+                {
+                    MessageBox.Show("Bạn chưa check-in hoặc đã checkout hôm nay.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return; // Exit if no check-in record found or already checked out
+                }
+                // Check if the check-out time is at least 30 minutes after check-in time
+                TimeSpan tgVao = existingRecord.TGVao.Value;
+                if (tgRa - tgVao < TimeSpan.FromMinutes(30))
+                {
+                    var dialogResult = MessageBox.Show(
+                        "Thời gian check-out quá sớm. Bạn có muốn tiếp tục checkout không?",
+                        "Cảnh báo",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning
+                    );
+
+                    if (dialogResult == DialogResult.No)
+                    {
+                        return; // Cancel checkout if user presses No
+                    }
+                }
+                // Update the existing record's TGRa
+                existingRecord.TGRa = tgRa;
+                bool success = chamCongBLL.UpdateChamCong(existingRecord); // You'll need to implement this method in your BLL
+
+                if (success)
+                {
+                    MessageBox.Show("Check-out thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadChamCongData();  // Reload the attendance data
+                }
+                else
+                {
+                    MessageBox.Show("Lỗi khi check-out!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thực hiện Check-out: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
         #endregion
-
-
     }
 }

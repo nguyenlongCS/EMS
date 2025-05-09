@@ -16,4 +16,9 @@ public class ChamCongBLL
         // Kiểm tra logic trước khi thêm
         return chamCongDAL.InsertChamCong(chamCong);
     }
+    public bool UpdateChamCong(ChamCongDTO chamCong)
+    {
+        return chamCongDAL.UpdateChamCong(chamCong);
+    }
+
 }

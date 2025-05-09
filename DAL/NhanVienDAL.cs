@@ -70,5 +70,25 @@ namespace BTL_LTCSDL.DAL
                 }
             }
         }
+        //Phan nay them vao de ComBoBox hiện danh sách mã nhân viên (Long)
+        public List<string> GetAllMaNhanVien()
+        {
+            List<string> maNhanVienList = new List<string>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT MaNV FROM NhanVien";  // Lấy chỉ Mã Nhân Viên
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        maNhanVienList.Add(reader["MaNV"].ToString());  // Chỉ lấy Mã Nhân Viên
+                    }
+                }
+            }
+            return maNhanVienList;
+        }
+
     }
 }

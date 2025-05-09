@@ -25,5 +25,10 @@ namespace BTL_LTCSDL.BLL
 
             return dal.InsertNhanVien(nv);
         }
+        //Phan nay them vao de ComBoBox hiện danh sách mã nhân viên (Long)
+        public List<string> GetAllMaNhanVien()
+        {
+            return dal.GetAllMaNhanVien();  // Gọi DAL để lấy Mã Nhân Viên
+        }
     }
 }
