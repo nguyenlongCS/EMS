@@ -10,5 +10,6 @@ public class ChamCongDTO
     public TimeSpan? TGVaoTangCa { get; set; }
     public TimeSpan? TGRaTangCa { get; set; }
     public string TrangThai { get; set; }
-    public int? VangCoPhep { get; set; }
+    public bool Vang { get; set; } // ❗ Bỏ nullable
+    public bool? VangCoPhep { get; set; } // vẫn nullable
 }

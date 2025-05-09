@@ -29,6 +29,10 @@ namespace GUI
             LoadNhanVienData();
             LoadTinhLuongData();
             LoadChamCongData();
+            // Khởi tạo timer để cập nhật thời gian hiện tại
+            timer1.Interval = 1000; // 1 giây
+            timer1.Tick += timer1_Tick;
+            timer1.Start();
         }
 
         #region Thiết lập điều khiển
@@ -92,6 +96,7 @@ namespace GUI
             dataGridView_ChamCong.Columns.Add("TGRaTangCa", "TG Ra Tăng Ca");
             dataGridView_ChamCong.Columns.Add("TrangThai", "Trạng Thái");
             dataGridView_ChamCong.Columns.Add("VangCoPhep", "Vắng Có Phép");
+            dataGridView_ChamCong.Columns.Add("Vang", "Vắng");
         }
 
 
@@ -243,8 +248,14 @@ namespace GUI
             {
                 var danhSachChamCong = chamCongBLL.GetDanhSachChamCong();
                 dataGridView_ChamCong.Rows.Clear();
+
                 foreach (var cc in danhSachChamCong)
                 {
+                    string vangText = cc.Vang ? "True" : "False";
+                    string vangCoPhepText = cc.Vang
+                        ? (cc.VangCoPhep?.ToString() ?? "null")  // nếu có vắng, hiển thị true/false/null
+                        : "null"; // nếu không vắng, luôn null
+
                     dataGridView_ChamCong.Rows.Add(
                         cc.MaCC,
                         cc.MaNV,
@@ -254,7 +265,8 @@ namespace GUI
                         cc.TGVaoTangCa?.ToString(@"hh\:mm") ?? "",
                         cc.TGRaTangCa?.ToString(@"hh\:mm") ?? "",
                         cc.TrangThai,
-                        cc.VangCoPhep?.ToString() ?? "0"
+                        vangCoPhepText,
+                        vangText
                     );
                 }
             }
@@ -263,14 +275,249 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi tải dữ liệu chấm công: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void dataGridView_ChamCong_SelectionChanged(object sender, EventArgs e)
-        {
-            //Hàm này tượng tự DataGridView_DSNV_Luong_SelectionChanged_1
-        }
+
+
         private void LoadChamCongChiTiet(ChamCongDTO chamCong)
         {
-            //Hàm này tương tự LoadLuongChiTiet
+            //Tương tụ hàm LoadLuongChiTiet
         }
+
+        private void dataGridView_ChamCong_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView_ChamCong.SelectedRows.Count == 0) return;
+
+            try
+            {
+                var row = dataGridView_ChamCong.SelectedRows[0];
+
+                // Lấy dữ liệu từ dòng được chọn
+                string maCC = row.Cells["MaCC"].Value?.ToString();
+                string maNV = row.Cells["MaNV"].Value?.ToString();  // <- CHỖ NÀY nè
+                string ngayCC = row.Cells["NgayCC"].Value?.ToString();
+                string tgVao = row.Cells["TGVao"].Value?.ToString();
+                string tgRa = row.Cells["TGRa"].Value?.ToString();
+                string trangThaiDB = row.Cells["TrangThai"].Value?.ToString();
+                string vang = row.Cells["Vang"].Value?.ToString()?.ToLower();
+                string coPhep = row.Cells["VangCoPhep"].Value?.ToString()?.ToLower();
+
+                // Gán dữ liệu ra các label
+                lbl_MaCC.Text = maCC;
+                lbl_MaNV.Text = maNV;  // <- GÁN VÀO ĐÂY nè
+                lbl_NgayCC.Text = ngayCC;
+                lbl_ThoiGianHienTai.Text = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy");
+                lbl_TrangThai.Text = string.IsNullOrEmpty(trangThaiDB) ? "Không xác định" : trangThaiDB;
+
+                if (vang == "true")
+                {
+                    lbl_Vang.Text = "Có";
+                    lbl_VangCoPhep.Text = coPhep == "true" ? "Có"
+                                              : coPhep == "false" ? "Không"
+                                              : "Không xác định";
+                    lbl_LamDayDu.Text = "Không";
+                }
+                else
+                {
+                    lbl_Vang.Text = "Không";
+                    lbl_VangCoPhep.Text = "Không vắng";
+                    lbl_LamDayDu.Text = "Có";
+                }
+
+                // Tính đi trễ / về sớm nếu có giờ
+                string tgTre = "-", tgSom = "-";
+                if (vang != "true" && TimeSpan.TryParse(tgVao, out TimeSpan vao)
+                    && TimeSpan.TryParse(tgRa, out TimeSpan ra))
+                {
+                    TimeSpan quyDinhVao = new TimeSpan(8, 0, 0);
+                    TimeSpan quyDinhRa = new TimeSpan(17, 0, 0);
+
+                    tgTre = vao > quyDinhVao ? (vao - quyDinhVao).ToString(@"hh\:mm") : "0:00";
+                    tgSom = ra < quyDinhRa ? (quyDinhRa - ra).ToString(@"hh\:mm") : "0:00";
+                }
+
+                lbl_ThoiGianDiTre.Text = tgTre;
+                lbl_ThoiGianVeSom.Text = tgSom;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xử lý dữ liệu chấm công: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private TimeSpan? ParseTime(string timeStr)
+        {
+            if (TimeSpan.TryParse(timeStr, out TimeSpan result))
+                return result;
+            return null;
+        }
+
+        private string GetTrangThaiMoTa(string code)
+        {
+            switch (code)
+            {
+                case "DITRE": return "Đi trễ";
+                case "VESOM": return "Về sớm";
+                case "VANG": return "Vắng";
+                case "VANGCOPHEP": return "Vắng có phép";
+                case "DAYDU": return "Làm đầy đủ";
+                default: return "Không rõ";
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            lbl_ThoiGianHienTai.Text = DateTime.Now.ToString("HH:mm:ss - dd/MM/yyyy");
+        }
+
+
+
+        private void dtpLocNgay_CCNV_ValueChanged(object sender, EventArgs e)
+        {
+            DateTime ngayChon = dtpLocNgay_CCNV.Value.Date;
+
+            var danhSachLoc = chamCongBLL
+                .GetDanhSachChamCong()
+                .Where(c => c.NgayCC.Date == ngayChon)
+                .ToList();
+
+            dataGridView_ChamCong.Rows.Clear();
+
+            foreach (var cc in danhSachLoc)
+            {
+                string vangText = cc.Vang ? "True" : "False";
+                string vangCoPhepText = cc.Vang ? (cc.VangCoPhep?.ToString() ?? "null") : "null";
+
+                dataGridView_ChamCong.Rows.Add(
+                    cc.MaCC,
+                    cc.MaNV,
+                    cc.NgayCC.ToString("dd/MM/yyyy"),
+                    cc.TGVao?.ToString(@"hh\:mm") ?? "",
+                    cc.TGRa?.ToString(@"hh\:mm") ?? "",
+                    cc.TGVaoTangCa?.ToString(@"hh\:mm") ?? "",
+                    cc.TGRaTangCa?.ToString(@"hh\:mm") ?? "",
+                    cc.TrangThai,
+                    vangCoPhepText,
+                    vangText
+                );
+            }
+        }
+        private void LoadDataGridViewChamCong()
+        {
+            dataGridView_ChamCong.DataSource = null;
+            dataGridView_ChamCong.Columns.Clear();
+            dataGridView_ChamCong.DataSource = chamCongBLL.GetDanhSachChamCong();
+        }
+
+
+        public void CheckIn(string maNV)
+        {
+            DateTime now = DateTime.Now;  // Lấy giờ hiện tại hệ thống
+            ChamCongDTO chamCong = chamCongBLL.GetChamCongTheoNgay(maNV, now.Date);  // Lấy thông tin chấm công của nhân viên theo ngày hiện tại
+
+            if (chamCong != null)
+            {
+                // Nếu đã có chấm công hôm nay, chỉ cần cập nhật giờ vào
+                chamCong.TGVao = now.TimeOfDay; // Ghi nhận giờ vào
+                chamCong.TrangThai = "Đã check-in"; // Cập nhật trạng thái nếu cần
+
+                // Cập nhật lại vào cơ sở dữ liệu
+                chamCongBLL.UpdateChamCong(chamCong);
+            }
+            else
+            {
+                // Nếu chưa có chấm công hôm nay, tạo mới
+                ChamCongDTO newChamCong = new ChamCongDTO
+                {
+                    MaNV = maNV,
+                    NgayCC = now.Date,
+                    TGVao = now.TimeOfDay,  // Ghi nhận giờ vào
+                    TrangThai = "Đã check-in", // Trạng thái check-in
+                    Vang = false,
+                    VangCoPhep = null,
+                    TGRa = null // Chưa có giờ ra
+                };
+
+                chamCongBLL.InsertChamCong(newChamCong); // Thêm chấm công mới
+            }
+        }
+        public void CheckOut(string maNV)
+        {
+            DateTime now = DateTime.Now;  // Lấy giờ hiện tại hệ thống
+            ChamCongDTO chamCong = chamCongBLL.GetChamCongTheoNgay(maNV, now.Date);  // Lấy thông tin chấm công của nhân viên theo ngày hiện tại
+
+            if (chamCong != null)
+            {
+                // Nếu đã có chấm công hôm nay, chỉ cần cập nhật giờ ra
+                chamCong.TGRa = now.TimeOfDay; // Ghi nhận giờ ra
+                chamCong.TrangThai = "Đã check-out"; // Cập nhật trạng thái nếu cần
+
+                // Cập nhật lại vào cơ sở dữ liệu
+                chamCongBLL.UpdateChamCong(chamCong);
+            }
+            else
+            {
+                MessageBox.Show("Chưa check-in. Vui lòng check-in trước khi check-out.");
+            }
+        }
+
+        private void button_CheckIn_Click(object sender, EventArgs e)
+        {
+            string maNV = txtNhapMaNV.Text.Trim();
+            DateTime ngayCC = DateTime.Today;
+            TimeSpan gioHienTai = DateTime.Now.TimeOfDay;
+
+            // Kiểm tra nếu đã có chấm công trong ngày
+            var chamCongHienTai = chamCongBLL.GetChamCongTheoNgay(maNV, ngayCC);
+
+            if (chamCongHienTai != null)
+            {
+                MessageBox.Show("Nhân viên đã check-in hôm nay!");
+                return;
+            }
+
+            ChamCongDTO newChamCong = new ChamCongDTO
+            {
+                MaNV = maNV,
+                NgayCC = ngayCC,
+                TGVao = gioHienTai,
+                Vang = false,
+                VangCoPhep = null,
+                TrangThai = "Đã check-in"
+            };
+
+            bool result = chamCongBLL.InsertChamCong(newChamCong);
+            if (result)
+            {
+                MessageBox.Show("Check-in thành công!");
+                LoadDataGridViewChamCong(); // Gọi lại hàm load
+            }
+            else
+            {
+                MessageBox.Show("Check-in thất bại!");
+            }
+        }
+
+
+        private void button_CheckOut_Click(object sender, EventArgs e)
+        {
+            string maNV = txtNhapMaNV.Text;  // Lấy mã nhân viên từ TextBox
+            if (!string.IsNullOrEmpty(maNV))
+            {
+                CheckOut(maNV);  // Gọi phương thức CheckOut
+                MessageBox.Show("Check-out thành công!");
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng nhập mã nhân viên.");
+            }
+        }
+        private void LocChamCongTheoNgayVaNV()
+        {
+            string maNV = lbl_MaNV.Text;
+            DateTime ngay = dtpLocNgay_CCNV.Value.Date;
+
+            var cc = chamCongBLL.GetChamCongTheoNgay(maNV, ngay);
+            dataGridView_ChamCong.DataSource = cc != null ? new List<ChamCongDTO> { cc } : new List<ChamCongDTO>();
+        }
+
         #endregion
     }
 }
