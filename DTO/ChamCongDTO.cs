@@ -2,14 +2,11 @@
 
 public class ChamCongDTO
 {
-    public string MaCC { get; set; }
-    public string MaNV { get; set; }
-    public DateTime NgayCC { get; set; }
-    public TimeSpan? TGVao { get; set; }
-    public TimeSpan? TGRa { get; set; }
-    public TimeSpan? TGVaoTangCa { get; set; }
-    public TimeSpan? TGRaTangCa { get; set; }
-    public string TrangThai { get; set; }
-    public bool Vang { get; set; } // ❗ Bỏ nullable
-    public bool? VangCoPhep { get; set; } // vẫn nullable
+    public string MaCC { get; set; } //nchar(10) trong csdl
+    public string MaNV { get; set; } //nchar(10)
+    public DateTime NgayCC { get; set; }//datetime
+    public TimeSpan? TGVao { get; set; }//time(7)
+    public TimeSpan? TGRa { get; set; }//time(7)
+    public TimeSpan? TGVaoTangCa { get; set; }//time(7)
+    public TimeSpan? TGRaTangCa { get; set; }//time(7)
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using BTL_LTCSDL.DTO;
 
@@ -7,151 +9,198 @@ namespace BTL_LTCSDL.DAL
 {
     public class ChamCongDAL
     {
-        private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security=True;";
+        private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security=True;";  // Kết nối cơ sở dữ liệu
 
-        // Lấy tất cả danh sách chấm công
-        public List<ChamCongDTO> GetAllChamCong()
-        {
-            var list = new List<ChamCongDTO>();
-            string query = "SELECT * FROM ChamCong";
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    bool vang = reader["Vang"] != DBNull.Value && Convert.ToBoolean(reader["Vang"]);
-
-                    var chamCong = new ChamCongDTO
-                    {
-                        MaCC = reader["MaCC"].ToString(),
-                        MaNV = reader["MaNV"].ToString(),
-                        NgayCC = Convert.ToDateTime(reader["NgayCC"]),
-                        TGVao = reader["TGVao"] != DBNull.Value ? (TimeSpan?)reader["TGVao"] : null,
-                        TGRa = reader["TGRa"] != DBNull.Value ? (TimeSpan?)reader["TGRa"] : null,
-                        TGVaoTangCa = reader["TGVaoTangCa"] != DBNull.Value ? (TimeSpan?)reader["TGVaoTangCa"] : null,
-                        TGRaTangCa = reader["TGRaTangCa"] != DBNull.Value ? (TimeSpan?)reader["TGRaTangCa"] : null,
-                        TrangThai = reader["TrangThai"].ToString(),
-                        Vang = vang,
-                        VangCoPhep = vang
-                            ? (reader["VangCoPhep"] != DBNull.Value ? (bool?)Convert.ToBoolean(reader["VangCoPhep"]) : null)
-                            : null
-                    };
-
-                    list.Add(chamCong);
-                }
-            }
-
-            return list;
-        }
-
-        // Lấy thông tin chấm công theo ngày và mã nhân viên
-        public ChamCongDTO GetChamCongTheoNgay(string maNV, DateTime ngayCC)
+        // Phương thức lấy chi tiết chấm công của một nhân viên
+        public ChamCongDTO GetChamCongChiTiet(string maNV, DateTime ngayCC)
         {
             ChamCongDTO chamCong = null;
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                conn.Open();
-                string query = "SELECT * FROM ChamCong WHERE MaNV = @MaNV AND NgayCC = @NgayCC";
+                string query = "SELECT MaCC, MaNV, NgayCC, TGVao, TGRa, TGVaoTangCa, TGRaTangCa " +
+                               "FROM ChamCong WHERE MaNV = @MaNV AND CONVERT(date, NgayCC) = @NgayCC";
+
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@MaNV", maNV);
-                cmd.Parameters.AddWithValue("@NgayCC", ngayCC);
+                cmd.Parameters.AddWithValue("@NgayCC", ngayCC.Date);  // Ensure we only compare the date part
 
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                try
                 {
-                    chamCong = new ChamCongDTO
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        MaCC = reader["MaCC"].ToString(),
-                        MaNV = reader["MaNV"].ToString(),
-                        NgayCC = Convert.ToDateTime(reader["NgayCC"]),
-                        TGVao = reader["TGVao"] != DBNull.Value ? (TimeSpan?)reader["TGVao"] : null,
-                        TGRa = reader["TGRa"] != DBNull.Value ? (TimeSpan?)reader["TGRa"] : null,
-                        Vang = Convert.ToBoolean(reader["Vang"]),
-
-                        // Sửa phần VangCoPhep để chuyển đổi đúng kiểu
-                        VangCoPhep = reader["VangCoPhep"] != DBNull.Value ?
-                                     (reader["VangCoPhep"].ToString() == "1" ? (bool?)true :
-                                     (reader["VangCoPhep"].ToString() == "0" ? (bool?)false : null)) :
-                                     null,
-
-                        TrangThai = reader["TrangThai"].ToString()
-                    };
+                        chamCong = new ChamCongDTO
+                        {
+                            MaCC = reader["MaCC"].ToString(),
+                            MaNV = reader["MaNV"].ToString(),
+                            NgayCC = Convert.ToDateTime(reader["NgayCC"]),
+                            TGVao = reader["TGVao"] as TimeSpan?,
+                            TGRa = reader["TGRa"] as TimeSpan?,
+                            TGVaoTangCa = reader["TGVaoTangCa"] as TimeSpan?,
+                            TGRaTangCa = reader["TGRaTangCa"] as TimeSpan?,
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi truy vấn dữ liệu chấm công: {ex.Message}");
                 }
             }
+
             return chamCong;
         }
 
 
-        // Thêm mới chấm công
+
+
+
+        // Phương thức lấy danh sách chấm công của tất cả nhân viên
+        public List<ChamCongDTO> GetDanhSachChamCong()
+        {
+            List<ChamCongDTO> danhSachChamCong = new List<ChamCongDTO>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT MaCC, MaNV, NgayCC, TGVao, TGRa, TGVaoTangCa, TGRaTangCa FROM ChamCong";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        ChamCongDTO chamCong = new ChamCongDTO
+                        {
+                            MaCC = reader["MaCC"].ToString(),
+                            MaNV = reader["MaNV"].ToString(),
+                            NgayCC = Convert.ToDateTime(reader["NgayCC"]),
+                            TGVao = reader["TGVao"] as TimeSpan?,
+                            TGRa = reader["TGRa"] as TimeSpan?,
+                            TGVaoTangCa = reader["TGVaoTangCa"] as TimeSpan?,
+                            TGRaTangCa = reader["TGRaTangCa"] as TimeSpan?,
+                        };
+
+                        danhSachChamCong.Add(chamCong);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi truy vấn danh sách chấm công: {ex.Message}");
+                }
+            }
+
+            return danhSachChamCong;
+        }
+
+
+        // Phương thức thêm mới một bản ghi chấm công
         public bool InsertChamCong(ChamCongDTO chamCong)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                conn.Open();
+                string query = "INSERT INTO ChamCong (MaCC, MaNV, NgayCC, TGVao, TGRa, TGVaoTangCa, TGRaTangCa) " +
+                               "VALUES (@MaCC, @MaNV, @NgayCC, @TGVao, @TGRa, @TGVaoTangCa, @TGRaTangCa)";
 
-                // Gán mã mới
-                string maCC = GenerateNewMaCC();
-
-                string query = "INSERT INTO ChamCong (MaCC, MaNV, NgayCC, TGVao, Vang, VangCoPhep, TrangThai) " +
-                               "VALUES (@MaCC, @MaNV, @NgayCC, @TGVao, @Vang, @VangCoPhep, @TrangThai)";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@MaCC", maCC);
-                cmd.Parameters.AddWithValue("@MaNV", chamCong.MaNV);
-                cmd.Parameters.AddWithValue("@NgayCC", chamCong.NgayCC);
-                cmd.Parameters.AddWithValue("@TGVao", chamCong.TGVao ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Vang", chamCong.Vang);
-                cmd.Parameters.AddWithValue("@VangCoPhep", chamCong.VangCoPhep ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@TrangThai", chamCong.TrangThai);
-
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
-            }
-        }
-
-
-        // Cập nhật thông tin chấm công (giờ vào/ra, trạng thái)
-        public bool UpdateChamCong(ChamCongDTO chamCong)
-        {
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                string query = "UPDATE ChamCong SET TGVao = @TGVao, TGRa = @TGRa, TrangThai = @TrangThai " +
-                               "WHERE MaNV = @MaNV AND NgayCC = @NgayCC";
-                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaCC", chamCong.MaCC);
                 cmd.Parameters.AddWithValue("@MaNV", chamCong.MaNV);
                 cmd.Parameters.AddWithValue("@NgayCC", chamCong.NgayCC);
                 cmd.Parameters.AddWithValue("@TGVao", chamCong.TGVao ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@TGRa", chamCong.TGRa ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@TrangThai", chamCong.TrangThai);
+                cmd.Parameters.AddWithValue("@TGVaoTangCa", chamCong.TGVaoTangCa ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@TGRaTangCa", chamCong.TGRaTangCa ?? (object)DBNull.Value);
+                
 
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
-            }
-        }
-        private string GenerateNewMaCC()
-        {
-            string newMaCC = "CC001"; // default nếu chưa có dữ liệu
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                string query = "SELECT TOP 1 MaCC FROM ChamCong ORDER BY MaCC DESC";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                var result = cmd.ExecuteScalar();
-
-                if (result != null)
+                try
                 {
-                    string lastMaCC = result.ToString(); // VD: "CC015"
-                    int number = int.Parse(lastMaCC.Substring(2)) + 1;
-                    newMaCC = "CC" + number.ToString("D3");
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi thêm dữ liệu chấm công: {ex.Message}");
                 }
             }
+        }
 
-            return newMaCC;
+        // Phương thức cập nhật chấm công
+        public bool UpdateChamCong(ChamCongDTO chamCong)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE ChamCong SET MaNV = @MaNV, NgayCC = @NgayCC, TGVao = @TGVao, TGRa = @TGRa, " +
+                               "TGVaoTangCa = @TGVaoTangCa, TGRaTangCa = @TGRaTangCa" +
+                               "WHERE MaCC = @MaCC";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaCC", chamCong.MaCC);
+                cmd.Parameters.AddWithValue("@MaNV", chamCong.MaNV);
+                cmd.Parameters.AddWithValue("@NgayCC", chamCong.NgayCC);
+                cmd.Parameters.AddWithValue("@TGVao", chamCong.TGVao ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@TGRa", chamCong.TGRa ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@TGVaoTangCa", chamCong.TGVaoTangCa ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@TGRaTangCa", chamCong.TGRaTangCa ?? (object)DBNull.Value);
+                
+
+                try
+                {
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi cập nhật dữ liệu chấm công: {ex.Message}");
+                }
+            }
+        }
+
+        // Phương thức xóa chấm công
+        public bool DeleteChamCong(string maCC)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "DELETE FROM ChamCong WHERE MaCC = @MaCC";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaCC", maCC);
+
+                try
+                {
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi xóa dữ liệu chấm công: {ex.Message}");
+                }
+            }
+        }
+        public int GetNextMaCC()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT MAX(CAST(SUBSTRING(MaCC, 3, 3) AS INT)) + 1 FROM ChamCong";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    return result != DBNull.Value ? Convert.ToInt32(result) : 1;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi lấy mã chấm công tiếp theo: {ex.Message}");
+                }
+            }
         }
 
     }

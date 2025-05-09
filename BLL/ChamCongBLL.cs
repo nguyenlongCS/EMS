@@ -7,30 +7,85 @@ namespace BTL_LTCSDL.BLL
 {
     public class ChamCongBLL
     {
-        private ChamCongDAL dal = new ChamCongDAL();
+        private ChamCongDAL chamCongDAL = new ChamCongDAL();  // Khởi tạo đối tượng DAL
 
-        // Lấy danh sách tất cả chấm công
+        // Phương thức lấy chi tiết chấm công của một nhân viên
+        public ChamCongDTO GetChamCongChiTiet(string maNV, DateTime ngayCC)
+        {
+            try
+            {
+                return chamCongDAL.GetChamCongChiTiet(maNV, ngayCC.Date);  // Pass only the date part
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi lấy chi tiết chấm công: {ex.Message}");
+            }
+        }
+
+
+
+        // Phương thức lấy danh sách chấm công của tất cả nhân viên
         public List<ChamCongDTO> GetDanhSachChamCong()
         {
-            return dal.GetAllChamCong();
+            try
+            {
+                return chamCongDAL.GetDanhSachChamCong();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi lấy danh sách chấm công: {ex.Message}");
+            }
         }
 
-        // Lấy chấm công theo ngày của một nhân viên
-        public ChamCongDTO GetChamCongTheoNgay(string maNV, DateTime ngayCC)
-        {
-            return dal.GetChamCongTheoNgay(maNV, ngayCC);
-        }
-
-        // Thêm chấm công mới
+        // Phương thức thêm mới một bản ghi chấm công
         public bool InsertChamCong(ChamCongDTO chamCong)
         {
-            return dal.InsertChamCong(chamCong);
+            try
+            {
+                return chamCongDAL.InsertChamCong(chamCong);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi thêm chấm công: {ex.Message}");
+            }
         }
 
-        // Cập nhật chấm công (giờ vào, giờ ra, trạng thái)
+        // Phương thức cập nhật chấm công
         public bool UpdateChamCong(ChamCongDTO chamCong)
         {
-            return dal.UpdateChamCong(chamCong);
+            try
+            {
+                return chamCongDAL.UpdateChamCong(chamCong);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi cập nhật chấm công: {ex.Message}");
+            }
         }
+
+        // Phương thức xóa chấm công
+        public bool DeleteChamCong(string maCC)
+        {
+            try
+            {
+                return chamCongDAL.DeleteChamCong(maCC);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi xóa chấm công: {ex.Message}");
+            }
+        }
+        public int GetNextMaCC()
+        {
+            try
+            {
+                return chamCongDAL.GetNextMaCC();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi lấy mã chấm công tiếp theo: {ex.Message}");
+            }
+        }
+
     }
 }

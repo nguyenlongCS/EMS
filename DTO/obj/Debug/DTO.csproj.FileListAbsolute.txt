@@ -4,3 +4,9 @@ C:\Users\thanh\source\repos\EMS\DTO\obj\Debug\DTO.csproj.AssemblyReference.cache
 C:\Users\thanh\source\repos\EMS\DTO\obj\Debug\DTO.csproj.CoreCompileInputs.cache
 C:\Users\thanh\source\repos\EMS\DTO\obj\Debug\DTO.dll
 C:\Users\thanh\source\repos\EMS\DTO\obj\Debug\DTO.pdb
+C:\Users\thanh\EMS\DTO\bin\Debug\DTO.dll
+C:\Users\thanh\EMS\DTO\bin\Debug\DTO.pdb
+C:\Users\thanh\EMS\DTO\obj\Debug\DTO.csproj.AssemblyReference.cache
+C:\Users\thanh\EMS\DTO\obj\Debug\DTO.csproj.CoreCompileInputs.cache
+C:\Users\thanh\EMS\DTO\obj\Debug\DTO.dll
+C:\Users\thanh\EMS\DTO\obj\Debug\DTO.pdb
