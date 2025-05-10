@@ -34,3 +34,5 @@ C:\Users\thanh\EMS\GUI\obj\Debug\GUI.csproj.CoreCompileInputs.cache
 C:\Users\thanh\EMS\GUI\obj\Debug\GUI.csproj.Up2Date
 C:\Users\thanh\EMS\GUI\obj\Debug\GUI.exe
 C:\Users\thanh\EMS\GUI\obj\Debug\GUI.pdb
+C:\Users\thanh\EMS\GUI\obj\Debug\GUI.Login.resources
+C:\Users\thanh\EMS\GUI\obj\Debug\GUI.ResetPass.resources

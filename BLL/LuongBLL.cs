@@ -1,25 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BTL_LTCSDL.DAL;
-using BTL_LTCSDL.DTO;
+using DAL;
+using DTO;
 
 public class LuongBLL
 {
     private LuongDAL luongDAL = new LuongDAL();
 
-    // Lấy danh sách lương
+    // Get salary data
     public List<LuongDTO> GetDanhSachLuong()
     {
         return luongDAL.GetDanhSachLuong();
     }
 
-    // Lấy chi tiết lương
+    // Get detailed salary data for a specific employee
     public DataRow GetLuongChiTiet(string maNV)
     {
         return luongDAL.GetLuongChiTiet(maNV);
     }
 }
+

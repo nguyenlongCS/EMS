@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
-using BTL_LTCSDL.DTO;
+using DTO;
 
-namespace BTL_LTCSDL.DAL
+namespace DAL
 {
     public class NhanVienDAL
     {

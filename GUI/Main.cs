@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using BTL_LTCSDL.BLL;
-using BTL_LTCSDL.DTO;
+using BLL;
+using DTO;
 
 namespace GUI
 {
@@ -91,10 +87,14 @@ namespace GUI
             DataGridView_DSNV_Luong.AllowUserToAddRows = false;
             DataGridView_DSNV_Luong.Columns.Clear();
             DataGridView_DSNV_Luong.Columns.Add("MaNV", "Mã NV");
-            DataGridView_DSNV_Luong.Columns.Add("TenNV", "Tên Nhân Viên");
             DataGridView_DSNV_Luong.Columns.Add("MaLuong", "Mã Lương");
             DataGridView_DSNV_Luong.Columns.Add("NgayXetLuong", "Ngày Xét Lương");
-            DataGridView_DSNV_Luong.Columns.Add("LuongNhanDuoc", "Lương Nhận Được");
+            DataGridView_DSNV_Luong.Columns.Add("TongNgayLam", "Tổng Ngày Làm");  // Đảm bảo tên này khớp
+            DataGridView_DSNV_Luong.Columns.Add("TongNgaynghi", "Tổng Ngày Nghỉ");  // Đảm bảo tên này khớp
+            DataGridView_DSNV_Luong.Columns.Add("TroCap", "Trợ Cấp");
+            DataGridView_DSNV_Luong.Columns.Add("TamUng", "Tạm Ứng");
+
+
 
             // Thiết lập DataGridView Chấm công
             dataGridView_ChamCong.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -126,11 +126,11 @@ namespace GUI
                 foreach (var nv in bll.GetAllNhanVien())
                 {
                     dataGridView1.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.DiaChi, nv.SoDT, nv.Email,
-                                           nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
-                                           nv.CCCD, nv.ChucVu, nv.MaPB);
+                                            nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
+                                            nv.CCCD, nv.ChucVu, nv.MaPB);
                     dataGridView_DSNV.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.DiaChi, nv.SoDT, nv.Email,
-                                           nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
-                                           nv.CCCD, nv.ChucVu, nv.MaPB);
+                                            nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
+                                            nv.CCCD, nv.ChucVu, nv.MaPB);
                 }
             }
             catch (Exception ex)
@@ -221,19 +221,24 @@ namespace GUI
             try
             {
                 List<LuongDTO> danhSach = luongBLL.GetDanhSachLuong();
+
                 if (DataGridView_DSNV_Luong.Columns.Count == 0)
                 {
-                    SetupDataGridView();
+                    SetupDataGridView();  // Thiết lập cột nếu chưa thiết lập
                 }
+
                 DataGridView_DSNV_Luong.Rows.Clear();
+
                 foreach (var luong in danhSach)
                 {
                     DataGridView_DSNV_Luong.Rows.Add(
-                        luong.MaNV,
-                        luong.TenNV,
-                        luong.MaLuong,
-                        luong.NgayXetLuong.ToString("dd/MM/yyyy"),
-                        luong.LuongNhanDuoc.ToString("N0") + " VNĐ"
+                        luong.MaNV,                // Mã nhân viên
+                        luong.MaLuong,             // Mã lương
+                        luong.NgayXetLuong.ToString("dd/MM/yyyy"),  // Ngày xét lương
+                        luong.TongNgayLam,       // Tổng số ngày làm
+                        luong.TongNgaynghi,      // Tổng số ngày nghỉ
+                        luong.TroCap,              // Trợ cấp
+                        luong.TamUng               // Tạm ứng
                     );
                 }
             }
@@ -242,6 +247,7 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi tải dữ liệu Lương: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void DataGridView_DSNV_Luong_SelectionChanged_1(object sender, EventArgs e)
         {
@@ -261,27 +267,9 @@ namespace GUI
 
         private void LoadLuongChiTiet(string maNV)
         {
-            try
-            {
-                DataRow row = luongBLL.GetLuongChiTiet(maNV);
-                if (row != null)
-                {
-                    label_SoGioLam.Text = row["SoGioLam"].ToString();
-                    label_SoNgayNghi.Text = row["SoNgayNghi"].ToString();
-                    label_SoGioDiTre.Text = row["SoGioTre"].ToString();
-                    label_LuongCanban.Text = double.Parse(row["LuongCanBanTheoBac"].ToString()).ToString("N0");
-                    label_BacLuong.Text = row["BacLuong"].ToString();
-                    label_SoGioTangCa.Text = row["SoGioTangCa"].ToString();
-                    label_TroCap.Text = double.Parse(row["TroCap"].ToString()).ToString("N0");
-                    label_TamUng.Text = double.Parse(row["TamUng"].ToString()).ToString("N0");
-                    label_LuongNhanDuoc.Text = $"{double.Parse(row["LuongNhanDuoc"].ToString()):N0} VNĐ";
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải chi tiết Lương: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            
         }
+
 
         #endregion
 
@@ -607,12 +595,7 @@ namespace GUI
                         }
                     }
                 }
-                else
-                {
-                    // Nếu checkbox không được tích vào, có thể phục hồi trạng thái Vang hoặc thực hiện các hành động khác nếu cần.
-                    // Ví dụ: nếu checkbox bị bỏ chọn, bạn có thể gỡ bỏ việc thay đổi hoặc không làm gì
-                    // Mặc định không làm gì khi checkbox bỏ chọn, bạn có thể thêm logic nếu cần.
-                }
+                
             }
             catch (Exception ex)
             {

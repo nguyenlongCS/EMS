@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BTL_LTCSDL.DAL;
-using BTL_LTCSDL.DTO;
+﻿using System.Collections.Generic;
+using DAL;
+using DTO;
 
-namespace BTL_LTCSDL.BLL
+namespace BLL
 {
     public class NhanVienBLL
     {

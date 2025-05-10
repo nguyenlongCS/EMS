@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using BTL_LTCSDL.DTO;
+using DTO;
 
 public class ChamCongBLL
 {
