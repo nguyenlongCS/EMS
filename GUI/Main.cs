@@ -163,7 +163,7 @@ namespace GUI
                     MaPB = textBox_MaPhongBan.Text
                 };
 
-                if (bll.InsertNhanVien(nv))
+                if (bll.InsertNhanVienBLL(nv))
                 {
                     MessageBox.Show("Thêm nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadNhanVienData();
@@ -267,7 +267,42 @@ namespace GUI
 
         private void LoadLuongChiTiet(string maNV)
         {
-            
+            try
+            {
+                // Get detailed salary data for this employee
+                DataRow luongChiTiet = luongBLL.GetLuongChiTiet(maNV);
+
+                if (luongChiTiet != null)
+                {
+                    // Populate labels with data directly from the database
+                    lbl_SoNgayLamViec.Text = luongChiTiet["TongNgayLam"].ToString();
+                    lbl_SoNgayNghi.Text = luongChiTiet["TongNgayNghi"].ToString();
+                    lbl_SoNNghiCoPhep.Text = luongChiTiet["TongNgayNghiCoPhep"].ToString();
+                    lbl_TongNgayDiTre.Text = luongChiTiet["TongNgayDiTre"].ToString();
+                    lbl_TongNgayVeSom.Text = luongChiTiet["TongNgayVeSom"].ToString();
+
+                    // Format currency values with appropriate separator
+                    lbl_TroCap.Text = string.Format("{0:N0} VND", Convert.ToDouble(luongChiTiet["TroCap"]));
+                    lbl_TamUng.Text = string.Format("{0:N0} VND", Convert.ToDouble(luongChiTiet["TamUng"]));
+                }
+                else
+                {
+                    // Clear labels if no data is found
+                    lbl_SoNgayLamViec.Text = "0";
+                    lbl_SoNgayNghi.Text = "0";
+                    lbl_SoNNghiCoPhep.Text = "0";
+                    lbl_TongNgayDiTre.Text = "0";
+                    lbl_TongNgayVeSom.Text = "0";
+                    lbl_TroCap.Text = "0 VND";
+                    lbl_TamUng.Text = "0 VND";
+
+                    MessageBox.Show($"Không tìm thấy thông tin lương chi tiết cho nhân viên {maNV}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu lương chi tiết: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
 
@@ -684,8 +719,128 @@ namespace GUI
                 MessageBox.Show($"An error occurred while restarting the DataGridView: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         #endregion
 
+        private void button_Delete_Click(object sender, EventArgs e)
+        {
+            string maNV = textBox_Employeed.Text.Trim();
 
+            if (string.IsNullOrEmpty(maNV))
+            {
+                MessageBox.Show("Vui lòng nhập mã nhân viên cần xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa nhân viên có mã \"{maNV}\" không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                if (bll.DeleteNhanVienBLL(maNV))
+                {
+                    MessageBox.Show("Xóa nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadNhanVienData(); // Cập nhật lại danh sách nhân viên
+                }
+                else
+                {
+                    MessageBox.Show("Xóa nhân viên thất bại hoặc mã nhân viên không tồn tại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void bt_SX_TheoTen_Click(object sender, EventArgs e)
+        {
+            var danhSach = bll.GetNV_SX_TenNV_BLL();
+            dataGridView1.DataSource = danhSach;
+            dataGridView_DSNV.DataSource = danhSach;
+        }
+
+        private void bt_SX_TheoMa_Click(object sender, EventArgs e)
+        {
+            var danhSach = bll.GetNV_SX_MaNV_BLL();
+            dataGridView1.DataSource = danhSach;
+            dataGridView_DSNV.DataSource = danhSach;
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                // Kiểm tra xem người dùng có click vào hàng hợp lệ không (RowIndex >= 0)
+                if (e.RowIndex >= 0)
+                {
+                    // Lấy thông tin hàng vừa click
+                    DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+                    textBox_Employeed.Text = row.Cells["MaNV"].Value.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xử lý click vào hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button_Update_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Kiểm tra mã nhân viên đã được chọn chưa
+                if (string.IsNullOrEmpty(textBox_Employeed.Text))
+                {
+                    MessageBox.Show("Vui lòng chọn nhân viên để cập nhật!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Lấy thông tin nhân viên từ các TextBox
+                var nv = new NhanVienDTO
+                {
+                    MaNV = textBox_Employeed.Text,  // Mã nhân viên không thay đổi
+                    HoNV = string.IsNullOrEmpty(textBox_Surname.Text) ? null : textBox_Surname.Text, // Chỉ cập nhật nếu có giá trị
+                    TenNV = string.IsNullOrEmpty(textBox_Name.Text) ? null : textBox_Name.Text, // Chỉ cập nhật nếu có giá trị
+                    DiaChi = string.IsNullOrEmpty(textBox_DiaChi.Text) ? null : textBox_DiaChi.Text, // Chỉ cập nhật nếu có giá trị
+                    SoDT = string.IsNullOrEmpty(textBox_SDT.Text) ? null : textBox_SDT.Text, // Chỉ cập nhật nếu có giá trị
+                    Email = string.IsNullOrEmpty(textBox_email.Text) ? null : textBox_email.Text, // Chỉ cập nhật nếu có giá trị
+                    NgaySinh = dateTime_DateOfBirth.Value, // Giữ nguyên ngày sinh
+                    GioiTinh = radioBut_Male.Checked, // Giới tính không thay đổi
+                    CCCD = string.IsNullOrEmpty(textBox_CCCD.Text) ? null : textBox_CCCD.Text, // Chỉ cập nhật nếu có giá trị
+                    ChucVu = string.IsNullOrEmpty(textBox_ChucVu.Text) ? null : textBox_ChucVu.Text, // Chỉ cập nhật nếu có giá trị
+                    MaPB = string.IsNullOrEmpty(textBox_MaPhongBan.Text) ? null : textBox_MaPhongBan.Text // Chỉ cập nhật nếu có giá trị
+                };
+
+                // Gọi BLL để cập nhật dữ liệu
+                bool isUpdated = bll.UpdateNhanVien(nv);
+
+                if (isUpdated)
+                {
+                    MessageBox.Show("Cập nhật nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadNhanVienData();  // Reload lại dữ liệu
+                }
+                else
+                {
+                    MessageBox.Show("Cập nhật nhân viên thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi cập nhật nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Bt_ClearnTxtBox_Click(object sender, EventArgs e)
+        {
+            // Xóa nội dung của tất cả các TextBox
+            textBox_Employeed.Clear();
+            textBox_Surname.Clear();
+            textBox_Name.Clear();
+            textBox_DiaChi.Clear();
+            textBox_SDT.Clear();
+            textBox_email.Clear();
+            textBox_CCCD.Clear();
+            textBox_ChucVu.Clear();
+            textBox_MaPhongBan.Clear();
+
+            // Nếu có DateTimePicker hoặc các điều khiển khác cần làm sạch, cũng xử lý luôn
+            dateTime_DateOfBirth.Value = DateTime.Now;  // Hoặc đặt một giá trị mặc định nào đó
+            radioBut_Male.Checked = false; // Hoặc tùy thuộc vào yêu cầu của bạn
+        }
     }
 }

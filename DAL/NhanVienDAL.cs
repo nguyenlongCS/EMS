@@ -12,7 +12,6 @@ namespace DAL
     public class NhanVienDAL
     {
         private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security=True;";
-
         public List<NhanVienDTO> GetAllNhanVien()
         {
             List<NhanVienDTO> danhSach = new List<NhanVienDTO>();
@@ -45,7 +44,19 @@ namespace DAL
             return danhSach;
         }
 
-        public bool InsertNhanVien(NhanVienDTO nv)
+        public List<NhanVienDTO> GetNV_SX_TenNV_DAL()
+        {
+            var danhSach = GetAllNhanVien();
+            return danhSach.OrderBy(nv => nv.TenNV).ThenBy(nv => nv.MaNV).ToList();
+        }
+
+        public List<NhanVienDTO> GetNV_SX_MaNV_DAL()
+        {
+            var danhSach = GetAllNhanVien();
+            return danhSach.OrderBy(nv => nv.MaNV).ToList();
+        }
+
+        public bool InsertNhanVienDAL(NhanVienDTO nv)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -70,7 +81,64 @@ namespace DAL
                 }
             }
         }
-        //Phan nay them vao de ComBoBox hiện danh sách mã nhân viên (Long)
+        public bool DeleteNhanVienDAL(string maNV)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "DELETE FROM NhanVien WHERE MaNV = @MaNV";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@MaNV", maNV);
+                    return cmd.ExecuteNonQuery() > 0; // Trả về true nếu xóa thành công
+                }
+            }
+        }
+
+        public NhanVienDTO GetNhanVienByMaNV(string maNV)
+        {
+            NhanVienDTO nhanVien = null;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "SELECT * FROM NhanVien WHERE MaNV = @MaNV";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@MaNV", maNV);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                nhanVien = new NhanVienDTO
+                                {
+                                    MaNV = reader["MaNV"].ToString(),
+                                    HoNV = reader["HoNV"].ToString(),
+                                    TenNV = reader["TenNV"].ToString(),
+                                    DiaChi = reader["DiaChi"].ToString(),
+                                    SoDT = reader["SoDT"].ToString(),
+                                    Email = reader["Email"].ToString(),
+                                    NgaySinh = reader["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(reader["NgaySinh"]) : DateTime.MinValue,
+                                    GioiTinh = reader["GioiTinh"] != DBNull.Value ? Convert.ToBoolean(reader["GioiTinh"]) : false,
+                                    CCCD = reader["CCCD"].ToString(),
+                                    ChucVu = reader["ChucVu"].ToString(),
+                                    MaPB = reader["MaPB"].ToString()
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi hoặc xử lý ngoại lệ theo nhu cầu
+                Console.WriteLine($"Lỗi khi lấy thông tin nhân viên: {ex.Message}");
+            }
+
+            return nhanVien;
+        }
         public List<string> GetAllMaNhanVien()
         {
             List<string> maNhanVienList = new List<string>();
@@ -88,6 +156,116 @@ namespace DAL
                 }
             }
             return maNhanVienList;
+        }
+
+        public bool UpdateNhanVienDAL(NhanVienDTO nv)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    string query = "UPDATE NhanVien SET ";
+                    bool updateRequired = false;
+                    List<SqlParameter> parameters = new List<SqlParameter>();
+
+                    // Kiểm tra và chỉ cập nhật các trường có giá trị hợp lệ (không null và không rỗng)
+                    if (!string.IsNullOrEmpty(nv.HoNV))
+                    {
+                        query += "HoNV = @HoNV, ";
+                        parameters.Add(new SqlParameter("@HoNV", nv.HoNV));
+                        updateRequired = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(nv.TenNV))
+                    {
+                        query += "TenNV = @TenNV, ";
+                        parameters.Add(new SqlParameter("@TenNV", nv.TenNV));
+                        updateRequired = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(nv.DiaChi))
+                    {
+                        query += "DiaChi = @DiaChi, ";
+                        parameters.Add(new SqlParameter("@DiaChi", nv.DiaChi));
+                        updateRequired = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(nv.SoDT))
+                    {
+                        query += "SoDT = @SoDT, ";
+                        parameters.Add(new SqlParameter("@SoDT", nv.SoDT));
+                        updateRequired = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(nv.Email))
+                    {
+                        query += "Email = @Email, ";
+                        parameters.Add(new SqlParameter("@Email", nv.Email));
+                        updateRequired = true;
+                    }
+
+                    if (nv.NgaySinh != default(DateTime))
+                    {
+                        query += "NgaySinh = @NgaySinh, ";
+                        parameters.Add(new SqlParameter("@NgaySinh", nv.NgaySinh));
+                        updateRequired = true;
+                    }
+
+                    if (nv.GioiTinh != null)
+                    {
+                        query += "GioiTinh = @GioiTinh, ";
+                        parameters.Add(new SqlParameter("@GioiTinh", nv.GioiTinh));
+                        updateRequired = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(nv.CCCD))
+                    {
+                        query += "CCCD = @CCCD, ";
+                        parameters.Add(new SqlParameter("@CCCD", nv.CCCD));
+                        updateRequired = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(nv.ChucVu))
+                    {
+                        query += "ChucVu = @ChucVu, ";
+                        parameters.Add(new SqlParameter("@ChucVu", nv.ChucVu));
+                        updateRequired = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(nv.MaPB))
+                    {
+                        query += "MaPB = @MaPB, ";
+                        parameters.Add(new SqlParameter("@MaPB", nv.MaPB));
+                        updateRequired = true;
+                    }
+
+                    if (!updateRequired)
+                    {
+                        return false; // Không có trường nào cần cập nhật
+                    }
+
+                    // Xóa dấu phẩy cuối cùng
+                    query = query.TrimEnd(',', ' ') + " WHERE MaNV = @MaNV";
+                    parameters.Add(new SqlParameter("@MaNV", nv.MaNV));
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddRange(parameters.ToArray());
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        // Nếu có dòng bị ảnh hưởng, cập nhật thành công
+                        return rowsAffected > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi
+                Console.WriteLine($"Lỗi khi cập nhật nhân viên: {ex.Message}");
+                return false;
+            }
         }
 
     }
