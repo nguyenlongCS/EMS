@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using BTL_LTCSDL.DTO;
 
@@ -15,9 +14,7 @@ public class ChamCongDAL
         using (SqlConnection conn = new SqlConnection(connectionString))
         {
             conn.Open();
-            string query = @"
-        SELECT MaCC, MaNV, NgayCC, TGVao, TGRa, Vang
-        FROM ChamCong";
+            string query = "SELECT MaCC, MaNV, NgayCC, TGVao, TGRa, Vang FROM ChamCong";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             using (SqlDataReader reader = cmd.ExecuteReader())
@@ -39,6 +36,36 @@ public class ChamCongDAL
         return danhSach;
     }
 
+    // Lấy MaCC cao nhất trong bảng ChamCong
+    public string GetLastMaCC()
+    {
+        try
+        {
+            string query = "SELECT TOP 1 MaCC FROM ChamCong ORDER BY MaCC DESC";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    var result = cmd.ExecuteScalar();
+
+                    if (result != null)
+                    {
+                        return result.ToString();  // Trả về MaCC cao nhất
+                    }
+                    else
+                    {
+                        return "CC000";  // Trả về giá trị mặc định nếu không có dữ liệu
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Xử lý lỗi
+            return "CC000";  // Trả về giá trị mặc định khi có lỗi
+        }
+    }
 
     // Thêm chấm công mới
     public bool InsertChamCong(ChamCongDTO chamCong)
@@ -46,9 +73,7 @@ public class ChamCongDAL
         using (SqlConnection conn = new SqlConnection(connectionString))
         {
             conn.Open();
-            string query = @"
-            INSERT INTO ChamCong (MaCC, MaNV, NgayCC, TGVao, TGRa)
-            VALUES (@MaCC, @MaNV, @NgayCC, @TGVao, @TGRa)";
+            string query = "INSERT INTO ChamCong (MaCC, MaNV, NgayCC, TGVao, TGRa, Vang) VALUES (@MaCC, @MaNV, @NgayCC, @TGVao, @TGRa, @Vang)";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
@@ -57,11 +82,11 @@ public class ChamCongDAL
                 cmd.Parameters.AddWithValue("@NgayCC", chamCong.NgayCC);
                 cmd.Parameters.AddWithValue("@TGVao", chamCong.TGVao.HasValue ? (object)chamCong.TGVao.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("@TGRa", chamCong.TGRa.HasValue ? (object)chamCong.TGRa.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("@Vang", chamCong.Vang);
 
                 return cmd.ExecuteNonQuery() > 0; // Trả về true nếu thêm thành công
             }
         }
-
     }
     public bool UpdateChamCong(ChamCongDTO chamCong)
     {
@@ -69,14 +94,21 @@ public class ChamCongDAL
         {
             conn.Open();
             string query = @"
-        UPDATE ChamCong
-        SET TGRa = @TGRa
-        WHERE MaCC = @MaCC";
+            UPDATE ChamCong
+            SET TGVao = @TGVao, TGRa = @TGRa, Vang = @Vang
+            WHERE MaCC = @MaCC AND MaNV = @MaNV AND NgayCC = @NgayCC";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                cmd.Parameters.AddWithValue("@TGRa", chamCong.TGRa);
+                // Handle null for TGVao and TGRa
+                cmd.Parameters.AddWithValue("@TGVao", chamCong.TGVao.HasValue ? (object)chamCong.TGVao.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("@TGRa", chamCong.TGRa.HasValue ? (object)chamCong.TGRa.Value : DBNull.Value);
+
+                // Include Vang (if needed)
+                cmd.Parameters.AddWithValue("@Vang", chamCong.Vang);
                 cmd.Parameters.AddWithValue("@MaCC", chamCong.MaCC);
+                cmd.Parameters.AddWithValue("@MaNV", chamCong.MaNV);
+                cmd.Parameters.AddWithValue("@NgayCC", chamCong.NgayCC);
 
                 return cmd.ExecuteNonQuery() > 0; // Return true if update is successful
             }
