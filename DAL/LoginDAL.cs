@@ -7,7 +7,7 @@ namespace DAL
 {
     public class LoginDAL
     {
-        private readonly string connectionString = "Server = LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security = True;";
+        private readonly string connectionString = "Server = LONG_ACER\\SQLEXPRESS;Database=EMS;Integrated Security = True;";
 
         public LoginDTO GetUser(string username, string password)
         {

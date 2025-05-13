@@ -29,4 +29,9 @@ public class ChamCongBLL
     {
         return chamCongDAL.GetLastMaCC();
     }
+    // Xóa chấm công theo mã nhân viên
+    public bool DeleteChamCongByMaNV(string maNV)
+    {
+        return chamCongDAL.DeleteChamCongByMaNV(maNV); // Gọi DAL để xóa bản ghi chấm công của nhân viên
+    }
 }

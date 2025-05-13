@@ -30,7 +30,6 @@ namespace BLL
 
         public bool DeleteNhanVienBLL(string maNV)
         {
-
             try
             {
                 // Kiểm tra sự tồn tại của nhân viên
@@ -50,6 +49,7 @@ namespace BLL
                 return false;
             }
         }
+
 
         public List<NhanVienDTO> GetNV_SX_TenNV_BLL()
         {

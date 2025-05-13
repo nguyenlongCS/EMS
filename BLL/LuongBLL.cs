@@ -49,6 +49,15 @@ public class LuongBLL
             throw new Exception($"Lỗi khi gọi UpdateLuong: {ex.Message}");
         }
     }
+    // Xóa lương theo mã nhân viên
+    public bool DeleteLuongByMaNV(string maNV)
+    {
+        return luongDAL.DeleteLuongByMaNV(maNV); // Gọi DAL để xóa bản ghi lương của nhân viên
+    }
+    public LuongDTO GetLuongByMaNV(string maNV)
+    {
+        return luongDAL.GetLuongByMaNV(maNV);  // This will delegate the call to the DAL layer
+    }
 
 
 }

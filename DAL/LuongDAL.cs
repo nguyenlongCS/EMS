@@ -6,7 +6,7 @@ using DTO;
 
 public class LuongDAL
 {
-    private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security=True;";
+    private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=EMS;Integrated Security=True;";
 
     // Lấy thông tin chi tiết lương cho một nhân viên
     public DataRow GetLuongChiTiet(string maNV)
@@ -129,5 +129,49 @@ public class LuongDAL
             }
         }
     }
+    public bool DeleteLuongByMaNV(string maNV)
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            conn.Open();
+            string query = "DELETE FROM Luong WHERE MaNV = @MaNV";
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@MaNV", maNV);
+                return cmd.ExecuteNonQuery() > 0; // Trả về true nếu xóa thành công
+            }
+        }
+    }
+    public LuongDTO GetLuongByMaNV(string maNV)
+    {
+        LuongDTO luong = null;
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            conn.Open();
+            string query = "SELECT * FROM Luong WHERE MaNV = @MaNV";
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@MaNV", maNV);
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        luong = new LuongDTO
+                        {
+                            MaNV = reader["MaNV"].ToString(),
+                            NgayXetLuong = Convert.ToDateTime(reader["NgayXetLuong"]),
+                            TongNgayLam = Convert.ToInt32(reader["TongNgayLam"]),
+                            TongNgaynghi = Convert.ToInt32(reader["TongNgaynghi"]),
+                            TroCap = Convert.ToDouble(reader["TroCap"]),
+                            TamUng = Convert.ToDouble(reader["TamUng"]),
+                            LuongNhanDuoc = Convert.ToDouble(reader["LuongNhanDuoc"])
+                        };
+                    }
+                }
+            }
+        }
+        return luong;
+    }
+
 
 }

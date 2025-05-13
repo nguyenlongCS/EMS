@@ -5,7 +5,7 @@ using DTO;
 
 public class ChamCongDAL
 {
-    private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security=True;";
+    private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=EMS;Integrated Security=True;";
 
     // Lấy danh sách chấm công của nhân viên
     public List<ChamCongDTO> GetDanhSachChamCong()
@@ -132,6 +132,20 @@ public class ChamCongDAL
             }
         }
     }
+    public bool DeleteChamCongByMaNV(string maNV)
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            conn.Open();
+            string query = "DELETE FROM ChamCong WHERE MaNV = @MaNV";
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@MaNV", maNV);
+                return cmd.ExecuteNonQuery() > 0; // Trả về true nếu xóa thành công
+            }
+        }
+    }
+
 
 
 }

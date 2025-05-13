@@ -11,7 +11,7 @@ namespace DAL
 {
     public class NhanVienDAL
     {
-        private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=QL_NhanVien;Integrated Security=True;";
+        private string connectionString = "Server=LONG_ACER\\SQLEXPRESS;Database=EMS;Integrated Security=True;";
         public List<NhanVienDTO> GetAllNhanVien()
         {
             List<NhanVienDTO> danhSach = new List<NhanVienDTO>();
@@ -81,6 +81,7 @@ namespace DAL
                 }
             }
         }
+
         public bool DeleteNhanVienDAL(string maNV)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -90,8 +91,9 @@ namespace DAL
 
                 try
                 {
-                    maNV = maNV.Trim(); // loại bỏ khoảng trắng thừa nếu có
+                    maNV = maNV.Trim(); // Loại bỏ khoảng trắng thừa
 
+                    // Kiểm tra xem nhân viên có trong bảng ChamCong hay Luong không
                     bool coTrongChamCong = false;
                     bool coTrongLuong = false;
 
@@ -109,14 +111,7 @@ namespace DAL
                         coTrongLuong = (int)cmd.ExecuteScalar() > 0;
                     }
 
-                    // Nếu không có trong ChamCong hoặc Luong thì không xóa
-                    if (!coTrongChamCong && !coTrongLuong)
-                    {
-                        transaction.Rollback();
-                        return false;
-                    }
-
-                    // Xóa dữ liệu liên quan trước
+                    // Xóa các bản ghi liên quan nếu có
                     if (coTrongChamCong)
                     {
                         using (SqlCommand cmd = new SqlCommand("DELETE FROM ChamCong WHERE MaNV = @MaNV", conn, transaction))
@@ -159,6 +154,8 @@ namespace DAL
                 }
             }
         }
+
+
 
         public NhanVienDTO GetNhanVienByMaNV(string maNV)
         {

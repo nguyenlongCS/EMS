@@ -25,7 +25,6 @@ namespace GUI
             this.FormBorderStyle = FormBorderStyle.FixedSingle;//ép form không được kéo giãn.
             this.StartPosition = FormStartPosition.CenterScreen;
         }
-
         private void Main_Load(object sender, EventArgs e)
         {
             SetupDataGridView();
@@ -33,11 +32,11 @@ namespace GUI
             LoadTinhLuongData();
             LoadChamCongData();
             LoadMaNV();
+            btn_Reload.Click += btn_Reload_Click;
             timer1.Interval = 1000; // 1 giây
             timer1.Tick += timer1_Tick;
             timer1.Start();
         }
-
         #region Thiết lập điều khiển
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -105,10 +104,37 @@ namespace GUI
             dataGridView_ChamCong.Columns.Add("Vang", "Vắng");
 
         }
+        private void btn_Reload_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Load lại dữ liệu lương từ BLL
+                LoadTinhLuongData(); // Đây là phương thức để tải lại dữ liệu vào DataGridView_DSNV_Luong
+
+                // Nếu cần, bạn có thể gọi LoadChamCongData() hoặc LoadNhanVienData() để làm mới dữ liệu của các bảng khác
+                // LoadChamCongData();
+                // LoadNhanVienData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải lại dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void button_Reload_cc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                LoadChamCongData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải lại dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
         #endregion
 
         #region Quản lý Nhân viên
-
         private void LoadNhanVienData()
         {
             try
@@ -126,46 +152,6 @@ namespace GUI
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi tải dữ liệu Nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void button_Show_Click(object sender, EventArgs e)
-        {
-            TabControl.SelectedTab = tabPage_DanhSachNV;
-        }
-
-        private void button_Add_Click_1(object sender, EventArgs e)
-        {
-            try
-            {
-                var nv = new NhanVienDTO
-                {
-                    MaNV = textBox_Employeed.Text,
-                    HoNV = textBox_Surname.Text,
-                    TenNV = textBox_Name.Text,
-                    DiaChi = textBox_DiaChi.Text,
-                    SoDT = textBox_SDT.Text,
-                    Email = textBox_email.Text,
-                    NgaySinh = dateTime_DateOfBirth.Value,
-                    GioiTinh = radioBut_Male.Checked,
-                    CCCD = textBox_CCCD.Text,
-                    ChucVu = textBox_ChucVu.Text,
-                    MaPB = textBox_MaPhongBan.Text
-                };
-
-                if (bll.InsertNhanVienBLL(nv))
-                {
-                    MessageBox.Show("Thêm nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadNhanVienData();
-                }
-                else
-                {
-                    MessageBox.Show("Thêm nhân viên thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi thêm nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void LoadMaNV()
@@ -199,26 +185,178 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi tải mã nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void button_Show_Click(object sender, EventArgs e)
+        {
+            TabControl.SelectedTab = tabPage_DanhSachNV;
+        }
+        private void button_Add_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var nv = new NhanVienDTO
+                {
+                    MaNV = textBox_Employeed.Text,
+                    HoNV = textBox_Surname.Text,
+                    TenNV = textBox_Name.Text,
+                    DiaChi = textBox_DiaChi.Text,
+                    SoDT = textBox_SDT.Text,
+                    Email = textBox_email.Text,
+                    NgaySinh = dateTime_DateOfBirth.Value,
+                    GioiTinh = radioBut_Male.Checked,
+                    CCCD = textBox_CCCD.Text,
+                    ChucVu = textBox_ChucVu.Text,
+                    MaPB = textBox_MaPhongBan.Text
+                };
 
+                if (bll.InsertNhanVienBLL(nv))
+                {
+                    MessageBox.Show("Thêm nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadNhanVienData();
+                }
+                else
+                {
+                    MessageBox.Show("Thêm nhân viên thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void button_Update_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(textBox_Employeed.Text))
+                {
+                    MessageBox.Show("Vui lòng chọn nhân viên để cập nhật!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                var nv = new NhanVienDTO
+                {
+                    MaNV = textBox_Employeed.Text,
+                    HoNV = string.IsNullOrEmpty(textBox_Surname.Text) ? null : textBox_Surname.Text,
+                    TenNV = string.IsNullOrEmpty(textBox_Name.Text) ? null : textBox_Name.Text,
+                    DiaChi = string.IsNullOrEmpty(textBox_DiaChi.Text) ? null : textBox_DiaChi.Text,
+                    SoDT = string.IsNullOrEmpty(textBox_SDT.Text) ? null : textBox_SDT.Text,
+                    Email = string.IsNullOrEmpty(textBox_email.Text) ? null : textBox_email.Text,
+                    NgaySinh = dateTime_DateOfBirth.Value,
+                    GioiTinh = radioBut_Male.Checked,
+                    CCCD = string.IsNullOrEmpty(textBox_CCCD.Text) ? null : textBox_CCCD.Text,
+                    ChucVu = string.IsNullOrEmpty(textBox_ChucVu.Text) ? null : textBox_ChucVu.Text,
+                    MaPB = string.IsNullOrEmpty(textBox_MaPhongBan.Text) ? null : textBox_MaPhongBan.Text
+                };
 
+                // Gọi BLL để cập nhật dữ liệu
+                bool isUpdated = bll.UpdateNhanVien(nv);
 
+                if (isUpdated)
+                {
+                    MessageBox.Show("Cập nhật nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadNhanVienData();  // Reload lại dữ liệu
+                }
+                else
+                {
+                    MessageBox.Show("Cập nhật nhân viên thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi cập nhật nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }      
+        private void button_Delete_Click(object sender, EventArgs e)
+        {
+            string maNV = textBox_Employeed.Text.Trim();
+
+            if (string.IsNullOrEmpty(maNV))
+            {
+                MessageBox.Show("Vui lòng nhập mã nhân viên cần xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa nhân viên có mã \"{maNV}\" không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    // Xóa các bản ghi liên quan (chấm công, lương)
+                    chamCongBLL.DeleteChamCongByMaNV(maNV);
+                    luongBLL.DeleteLuongByMaNV(maNV);
+
+                    // Xóa nhân viên
+                    if (bll.DeleteNhanVienBLL(maNV))
+                    {
+                        MessageBox.Show("Xóa nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadNhanVienData(); // Cập nhật lại danh sách nhân viên
+                    }
+                    else
+                    {
+                        MessageBox.Show("Xóa nhân viên thất bại hoặc mã nhân viên không tồn tại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi xóa nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        private void Bt_ClearnTxtBox_Click(object sender, EventArgs e)
+        {
+            textBox_Employeed.Clear();
+            textBox_Surname.Clear();
+            textBox_Name.Clear();
+            textBox_DiaChi.Clear();
+            textBox_SDT.Clear();
+            textBox_email.Clear();
+            textBox_CCCD.Clear();
+            textBox_ChucVu.Clear();
+            textBox_MaPhongBan.Clear();
+            dateTime_DateOfBirth.Value = DateTime.Now;
+            radioBut_Male.Checked = false;
+        }
+        private void bt_SX_TheoTen_Click(object sender, EventArgs e)
+        {
+            var danhSach = bll.GetNV_SX_TenNV_BLL();
+            dataGridView1.DataSource = danhSach;
+            dataGridView_DSNV.DataSource = danhSach;
+        }
+        private void bt_SX_TheoMa_Click(object sender, EventArgs e)
+        {
+            var danhSach = bll.GetNV_SX_MaNV_BLL();
+            dataGridView1.DataSource = danhSach;
+            dataGridView_DSNV.DataSource = danhSach;
+        }
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                // Kiểm tra xem người dùng có click vào hàng hợp lệ không (RowIndex >= 0)
+                if (e.RowIndex >= 0)
+                {
+                    // Lấy thông tin hàng vừa click
+                    DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+                    textBox_Employeed.Text = row.Cells["MaNV"].Value.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xử lý click vào hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
         #endregion
 
         #region Quản lý Lương
-
         private void LoadTinhLuongData()
         {
             try
             {
-                List<LuongDTO> danhSach = luongBLL.GetDanhSachLuong();
+                List<LuongDTO> danhSach = luongBLL.GetDanhSachLuong(); // Lấy dữ liệu lương từ BLL
 
-                if (DataGridView_DSNV_Luong.Columns.Count == 0)
-                {
-                    SetupDataGridView();  // Thiết lập cột nếu chưa thiết lập
-                }
-
+                // Clear current rows before adding new data
                 DataGridView_DSNV_Luong.Rows.Clear();
 
+                // Add rows for each employee's salary data
                 foreach (var luong in danhSach)
                 {
                     DataGridView_DSNV_Luong.Rows.Add(
@@ -228,7 +366,7 @@ namespace GUI
                         luong.TongNgaynghi,      // Tổng số ngày nghỉ
                         luong.TroCap,              // Trợ cấp
                         luong.TamUng,               // Tạm ứng
-                        luong.LuongNhanDuoc
+                        luong.LuongNhanDuoc      // Lương nhận được
                     );
                 }
             }
@@ -237,8 +375,6 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi tải dữ liệu Lương: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
         private void DataGridView_DSNV_Luong_SelectionChanged(object sender, EventArgs e)
         {
             try
@@ -259,7 +395,6 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi chọn dòng Lương: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void LoadLuongChiTiet(string maNV)
         {
             try
@@ -320,8 +455,6 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi tải dữ liệu lương chi tiết: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
         #endregion
 
         #region Quản lý Chấm công
@@ -355,7 +488,6 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi tải dữ liệu Chấm Công: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void dataGridView_ChamCong_SelectionChanged(object sender, EventArgs e)
         {
             try
@@ -465,9 +597,6 @@ namespace GUI
                 MessageBox.Show("Lỗi khi xử lý dữ liệu chấm công: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        
-
         private void button_CheckIn_Click(object sender, EventArgs e)
         {
             try
@@ -518,23 +647,19 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi thực hiện Check-in: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void button_CheckOut_Click(object sender, EventArgs e)
         {
             try
             {
-                // Get selected MaNV from ComboBox
                 string maNV = cbb_MaNV.SelectedItem.ToString();
-                DateTime ngayHienTai = DateTime.Now.Date; // Get today's date
-                TimeSpan tgRa = DateTime.Now.TimeOfDay;  // Get current time for TGRa
+                DateTime ngayHienTai = DateTime.Now.Date; 
+                TimeSpan tgRa = DateTime.Now.TimeOfDay;  
 
-                // Check if the employee has already checked in today
                 var chamCongList = chamCongBLL.GetDanhSachChamCong();
                 var existingRecord = chamCongList.FirstOrDefault(cc => cc.MaNV == maNV && cc.NgayCC.Date == ngayHienTai && cc.TGVao.HasValue && !cc.TGRa.HasValue);
 
                 if (existingRecord != null)
                 {
-                    // If the employee has checked in but hasn't checked out yet
                     TimeSpan tgVao = existingRecord.TGVao.Value;
                     if (tgRa - tgVao < TimeSpan.FromMinutes(30))
                     {
@@ -547,19 +672,17 @@ namespace GUI
 
                         if (dialogResult == DialogResult.No)
                         {
-                            return; // Cancel checkout if user presses No
+                            return; 
                         }
                     }
-
-                    // Update the TGRa if the employee hasn't checked out yet
                     existingRecord.TGRa = tgRa;
-                    existingRecord.Vang = 0;  // Set Vang to 0 (present)
+                    existingRecord.Vang = 0;  
                     bool success = chamCongBLL.UpdateChamCong(existingRecord);
 
                     if (success)
                     {
                         MessageBox.Show("Check-out thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadChamCongData();  // Reload the attendance data
+                        LoadChamCongData();  
                     }
                     else
                     {
@@ -722,122 +845,6 @@ namespace GUI
                 MessageBox.Show("Lỗi khi tạo lịch chấm công: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void button_Delete_Click(object sender, EventArgs e)
-        {
-            string maNV = textBox_Employeed.Text.Trim();
-
-            if (string.IsNullOrEmpty(maNV))
-            {
-                MessageBox.Show("Vui lòng nhập mã nhân viên cần xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa nhân viên có mã \"{maNV}\" không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
-            {
-                if (bll.DeleteNhanVienBLL(maNV))
-                {
-                    MessageBox.Show("Xóa nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadNhanVienData(); // Cập nhật lại danh sách nhân viên
-                }
-                else
-                {
-                    MessageBox.Show("Xóa nhân viên thất bại hoặc mã nhân viên không tồn tại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void bt_SX_TheoTen_Click(object sender, EventArgs e)
-        {
-            var danhSach = bll.GetNV_SX_TenNV_BLL();
-            dataGridView1.DataSource = danhSach;
-            dataGridView_DSNV.DataSource = danhSach;
-        }
-
-        private void bt_SX_TheoMa_Click(object sender, EventArgs e)
-        {
-            var danhSach = bll.GetNV_SX_MaNV_BLL();
-            dataGridView1.DataSource = danhSach;
-            dataGridView_DSNV.DataSource = danhSach;
-        }
-
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            try
-            {
-                // Kiểm tra xem người dùng có click vào hàng hợp lệ không (RowIndex >= 0)
-                if (e.RowIndex >= 0)
-                {
-                    // Lấy thông tin hàng vừa click
-                    DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
-                    textBox_Employeed.Text = row.Cells["MaNV"].Value.ToString();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi xử lý click vào hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void button_Update_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(textBox_Employeed.Text))
-                {
-                    MessageBox.Show("Vui lòng chọn nhân viên để cập nhật!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                var nv = new NhanVienDTO
-                {
-                    MaNV = textBox_Employeed.Text,  
-                    HoNV = string.IsNullOrEmpty(textBox_Surname.Text) ? null : textBox_Surname.Text, 
-                    TenNV = string.IsNullOrEmpty(textBox_Name.Text) ? null : textBox_Name.Text, 
-                    DiaChi = string.IsNullOrEmpty(textBox_DiaChi.Text) ? null : textBox_DiaChi.Text,
-                    SoDT = string.IsNullOrEmpty(textBox_SDT.Text) ? null : textBox_SDT.Text, 
-                    Email = string.IsNullOrEmpty(textBox_email.Text) ? null : textBox_email.Text, 
-                    NgaySinh = dateTime_DateOfBirth.Value, 
-                    GioiTinh = radioBut_Male.Checked, 
-                    CCCD = string.IsNullOrEmpty(textBox_CCCD.Text) ? null : textBox_CCCD.Text, 
-                    ChucVu = string.IsNullOrEmpty(textBox_ChucVu.Text) ? null : textBox_ChucVu.Text, 
-                    MaPB = string.IsNullOrEmpty(textBox_MaPhongBan.Text) ? null : textBox_MaPhongBan.Text 
-                };
-
-                // Gọi BLL để cập nhật dữ liệu
-                bool isUpdated = bll.UpdateNhanVien(nv);
-
-                if (isUpdated)
-                {
-                    MessageBox.Show("Cập nhật nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadNhanVienData();  // Reload lại dữ liệu
-                }
-                else
-                {
-                    MessageBox.Show("Cập nhật nhân viên thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi cập nhật nhân viên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void Bt_ClearnTxtBox_Click(object sender, EventArgs e)
-        {
-            textBox_Employeed.Clear();
-            textBox_Surname.Clear();
-            textBox_Name.Clear();
-            textBox_DiaChi.Clear();
-            textBox_SDT.Clear();
-            textBox_email.Clear();
-            textBox_CCCD.Clear();
-            textBox_ChucVu.Clear();
-            textBox_MaPhongBan.Clear();
-            dateTime_DateOfBirth.Value = DateTime.Now;  
-            radioBut_Male.Checked = false; 
-        }
         #endregion
-
-        
     }
 }
