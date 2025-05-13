@@ -86,11 +86,76 @@ namespace DAL
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                string query = "DELETE FROM NhanVien WHERE MaNV = @MaNV";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
                 {
-                    cmd.Parameters.AddWithValue("@MaNV", maNV);
-                    return cmd.ExecuteNonQuery() > 0; // Trả về true nếu xóa thành công
+                    maNV = maNV.Trim(); // loại bỏ khoảng trắng thừa nếu có
+
+                    bool coTrongChamCong = false;
+                    bool coTrongLuong = false;
+
+                    // Kiểm tra bảng ChamCong
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM ChamCong WHERE MaNV = @MaNV", conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@MaNV", maNV);
+                        coTrongChamCong = (int)cmd.ExecuteScalar() > 0;
+                    }
+
+                    // Kiểm tra bảng Luong
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Luong WHERE MaNV = @MaNV", conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@MaNV", maNV);
+                        coTrongLuong = (int)cmd.ExecuteScalar() > 0;
+                    }
+
+                    // Nếu không có trong ChamCong hoặc Luong thì không xóa
+                    if (!coTrongChamCong && !coTrongLuong)
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+
+                    // Xóa dữ liệu liên quan trước
+                    if (coTrongChamCong)
+                    {
+                        using (SqlCommand cmd = new SqlCommand("DELETE FROM ChamCong WHERE MaNV = @MaNV", conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@MaNV", maNV);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    if (coTrongLuong)
+                    {
+                        using (SqlCommand cmd = new SqlCommand("DELETE FROM Luong WHERE MaNV = @MaNV", conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@MaNV", maNV);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    // Cuối cùng xóa nhân viên
+                    using (SqlCommand cmd = new SqlCommand("DELETE FROM NhanVien WHERE MaNV = @MaNV", conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@MaNV", maNV);
+                        int affectedRows = cmd.ExecuteNonQuery();
+
+                        if (affectedRows == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine($"Lỗi khi xóa nhân viên: {ex.Message}");
+                    return false;
                 }
             }
         }

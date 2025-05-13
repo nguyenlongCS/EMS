@@ -88,31 +88,50 @@ public class ChamCongDAL
             }
         }
     }
+
     public bool UpdateChamCong(ChamCongDTO chamCong)
     {
         using (SqlConnection conn = new SqlConnection(connectionString))
         {
             conn.Open();
             string query = @"
-            UPDATE ChamCong
-            SET TGVao = @TGVao, TGRa = @TGRa, Vang = @Vang
-            WHERE MaCC = @MaCC AND MaNV = @MaNV AND NgayCC = @NgayCC";
+        UPDATE ChamCong
+        SET TGVao = @TGVao, TGRa = @TGRa, Vang = @Vang
+        WHERE MaCC = @MaCC AND MaNV = @MaNV AND NgayCC = @NgayCC";
 
-            using (SqlCommand cmd = new SqlCommand(query, conn))
+            using (SqlCommand cmd = new SqlCommand(query, conn)) // ← Đây nè!
             {
-                // Handle null for TGVao and TGRa
                 cmd.Parameters.AddWithValue("@TGVao", chamCong.TGVao.HasValue ? (object)chamCong.TGVao.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("@TGRa", chamCong.TGRa.HasValue ? (object)chamCong.TGRa.Value : DBNull.Value);
-
-                // Include Vang (if needed)
                 cmd.Parameters.AddWithValue("@Vang", chamCong.Vang);
                 cmd.Parameters.AddWithValue("@MaCC", chamCong.MaCC);
                 cmd.Parameters.AddWithValue("@MaNV", chamCong.MaNV);
                 cmd.Parameters.AddWithValue("@NgayCC", chamCong.NgayCC);
 
-                return cmd.ExecuteNonQuery() > 0; // Return true if update is successful
+                // Sau khi cập nhật trạng thái Vang, bạn có thể cần gọi hàm cập nhật số ngày nghỉ có phép
+                UpdateSoNgayNghiCoPhep(chamCong.MaNV);
+
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
     }
+
+    private void UpdateSoNgayNghiCoPhep(string maNV)
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            conn.Open();
+            string query = @"
+            UPDATE Luong
+            SET TongNgayNghiCoPhep = TongNgayNghiCoPhep + 1
+            WHERE MaNV = @MaNV";
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@MaNV", maNV);
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
 
 }

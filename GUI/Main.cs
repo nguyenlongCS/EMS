@@ -23,9 +23,7 @@ namespace GUI
 
             // Tắt resize
             this.FormBorderStyle = FormBorderStyle.FixedSingle;//ép form không được kéo giãn.
-
             this.StartPosition = FormStartPosition.CenterScreen;
-
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -34,8 +32,7 @@ namespace GUI
             LoadNhanVienData();
             LoadTinhLuongData();
             LoadChamCongData();
-            LoadMaNV();// Phan nay them vao de ComBoBox hiện danh sách mã nhân viên(Long)
-            // Khởi tạo timer để cập nhật thời gian hiện tại
+            LoadMaNV();
             timer1.Interval = 1000; // 1 giây
             timer1.Tick += timer1_Tick;
             timer1.Start();
@@ -44,7 +41,6 @@ namespace GUI
         #region Thiết lập điều khiển
         private void timer1_Tick(object sender, EventArgs e)
         {
-            // Update the label with current system time
             lbl_ThoiGianHienTai.Text = DateTime.Now.ToString("HH:mm:ss");
         }
         private void SetupDataGridView()
@@ -56,12 +52,12 @@ namespace GUI
             dataGridView1.Columns.Clear();
             dataGridView1.Columns.Add("MaNV", "Mã NV");
             dataGridView1.Columns.Add("TenNV", "Tên Nhân Viên");
-            dataGridView1.Columns.Add("DiaChi", "Địa Chỉ");
-            dataGridView1.Columns.Add("SoDT", "Số ĐT");
-            dataGridView1.Columns.Add("Email", "Email");
-            dataGridView1.Columns.Add("NgaySinh", "Ngày Sinh");
-            dataGridView1.Columns.Add("GioiTinh", "Giới Tính");
-            dataGridView1.Columns.Add("CCCD", "CCCD");
+            //dataGridView1.Columns.Add("DiaChi", "Địa Chỉ");
+            //dataGridView1.Columns.Add("SoDT", "Số ĐT");
+            //dataGridView1.Columns.Add("Email", "Email");
+            //dataGridView1.Columns.Add("NgaySinh", "Ngày Sinh");
+            //dataGridView1.Columns.Add("GioiTinh", "Giới Tính");
+            //dataGridView1.Columns.Add("CCCD", "CCCD");
             dataGridView1.Columns.Add("ChucVu", "Chức Vụ");
             dataGridView1.Columns.Add("MaPB", "Mã PB");
 
@@ -87,12 +83,12 @@ namespace GUI
             DataGridView_DSNV_Luong.AllowUserToAddRows = false;
             DataGridView_DSNV_Luong.Columns.Clear();
             DataGridView_DSNV_Luong.Columns.Add("MaNV", "Mã NV");
-            DataGridView_DSNV_Luong.Columns.Add("MaLuong", "Mã Lương");
             DataGridView_DSNV_Luong.Columns.Add("NgayXetLuong", "Ngày Xét Lương");
-            DataGridView_DSNV_Luong.Columns.Add("TongNgayLam", "Tổng Ngày Làm");  // Đảm bảo tên này khớp
-            DataGridView_DSNV_Luong.Columns.Add("TongNgaynghi", "Tổng Ngày Nghỉ");  // Đảm bảo tên này khớp
+            DataGridView_DSNV_Luong.Columns.Add("TongNgayLam", "Tổng Ngày Làm");  
+            DataGridView_DSNV_Luong.Columns.Add("TongNgaynghi", "Tổng Ngày Nghỉ");  
             DataGridView_DSNV_Luong.Columns.Add("TroCap", "Trợ Cấp");
             DataGridView_DSNV_Luong.Columns.Add("TamUng", "Tạm Ứng");
+            DataGridView_DSNV_Luong.Columns.Add("LuongNhanDuoc", "Lương nhận được");
 
 
 
@@ -109,10 +105,6 @@ namespace GUI
             dataGridView_ChamCong.Columns.Add("Vang", "Vắng");
 
         }
-
-
-
-
         #endregion
 
         #region Quản lý Nhân viên
@@ -125,9 +117,7 @@ namespace GUI
                 dataGridView_DSNV.Rows.Clear();
                 foreach (var nv in bll.GetAllNhanVien())
                 {
-                    dataGridView1.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.DiaChi, nv.SoDT, nv.Email,
-                                            nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
-                                            nv.CCCD, nv.ChucVu, nv.MaPB);
+                    dataGridView1.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.ChucVu, nv.MaPB);
                     dataGridView_DSNV.Rows.Add(nv.MaNV, nv.HoNV + " " + nv.TenNV, nv.DiaChi, nv.SoDT, nv.Email,
                                             nv.NgaySinh.ToString("dd/MM/yyyy"), nv.GioiTinh ? "Nam" : "Nữ",
                                             nv.CCCD, nv.ChucVu, nv.MaPB);
@@ -233,12 +223,12 @@ namespace GUI
                 {
                     DataGridView_DSNV_Luong.Rows.Add(
                         luong.MaNV,                // Mã nhân viên
-                        luong.MaLuong,             // Mã lương
                         luong.NgayXetLuong.ToString("dd/MM/yyyy"),  // Ngày xét lương
                         luong.TongNgayLam,       // Tổng số ngày làm
                         luong.TongNgaynghi,      // Tổng số ngày nghỉ
                         luong.TroCap,              // Trợ cấp
-                        luong.TamUng               // Tạm ứng
+                        luong.TamUng,               // Tạm ứng
+                        luong.LuongNhanDuoc
                     );
                 }
             }
@@ -249,18 +239,23 @@ namespace GUI
         }
 
 
-        private void DataGridView_DSNV_Luong_SelectionChanged_1(object sender, EventArgs e)
+        private void DataGridView_DSNV_Luong_SelectionChanged(object sender, EventArgs e)
         {
             try
             {
+                // Kiểm tra xem có chọn được dòng không
                 if (DataGridView_DSNV_Luong.SelectedRows.Count > 0)
                 {
+                    // Lấy mã nhân viên từ cột MaNV trong dòng được chọn
                     string maNV = DataGridView_DSNV_Luong.SelectedRows[0].Cells["MaNV"].Value.ToString();
+
+                    // Gọi hàm LoadLuongChiTiet để lấy thông tin lương chi tiết và lương cơ bản
                     LoadLuongChiTiet(maNV);
                 }
             }
             catch (Exception ex)
             {
+                // Hiển thị thông báo lỗi nếu có sự cố
                 MessageBox.Show($"Lỗi khi chọn dòng Lương: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -269,25 +264,41 @@ namespace GUI
         {
             try
             {
-                // Get detailed salary data for this employee
+                // Lấy dữ liệu lương chi tiết cho nhân viên từ BLL
                 DataRow luongChiTiet = luongBLL.GetLuongChiTiet(maNV);
 
                 if (luongChiTiet != null)
                 {
-                    // Populate labels with data directly from the database
+                    // Cập nhật các label với dữ liệu lương chi tiết
                     lbl_SoNgayLamViec.Text = luongChiTiet["TongNgayLam"].ToString();
                     lbl_SoNgayNghi.Text = luongChiTiet["TongNgayNghi"].ToString();
                     lbl_SoNNghiCoPhep.Text = luongChiTiet["TongNgayNghiCoPhep"].ToString();
                     lbl_TongNgayDiTre.Text = luongChiTiet["TongNgayDiTre"].ToString();
                     lbl_TongNgayVeSom.Text = luongChiTiet["TongNgayVeSom"].ToString();
+                    lbl_LuongNhanDuoc.Text = string.Format("{0:N0} VND", Convert.ToDouble(luongChiTiet["LuongNhanDuoc"]));  
+                    lbl_ThueVat.Text = string.Format("{0:N0} VND", Convert.ToDouble(luongChiTiet["ThueVat"]));  
 
-                    // Format currency values with appropriate separator
+                    // Định dạng và hiển thị các giá trị trợ cấp và tạm ứng
                     lbl_TroCap.Text = string.Format("{0:N0} VND", Convert.ToDouble(luongChiTiet["TroCap"]));
                     lbl_TamUng.Text = string.Format("{0:N0} VND", Convert.ToDouble(luongChiTiet["TamUng"]));
+
+                    // Lấy thông tin lương theo bậc từ bảng LuongTheoBac
+                    string maBacLuong = luongChiTiet["MaBacLuong"].ToString(); 
+                    DataRow salaryData = luongBLL.GetLuongTheoBac(maBacLuong); 
+                    if (salaryData != null)
+                    {
+                        // Cập nhật các label với dữ liệu lương cơ bản và bậc lương
+                        lbl_LuongCanban.Text = string.Format("{0:N2} VND", Convert.ToDecimal(salaryData["LuongCanBanTheoBac"]));
+                        lbl_BacLuong.Text = $"Bậc {salaryData["BacLuong"]}";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không tìm thấy thông tin lương theo bậc cho nhân viên này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
                 else
                 {
-                    // Clear labels if no data is found
+                    // Nếu không tìm thấy dữ liệu lương chi tiết, xóa các label
                     lbl_SoNgayLamViec.Text = "0";
                     lbl_SoNgayNghi.Text = "0";
                     lbl_SoNNghiCoPhep.Text = "0";
@@ -295,6 +306,11 @@ namespace GUI
                     lbl_TongNgayVeSom.Text = "0";
                     lbl_TroCap.Text = "0 VND";
                     lbl_TamUng.Text = "0 VND";
+                    lbl_LuongCanban.Text = "0 VND";
+                    lbl_BacLuong.Text = "Bậc 0";
+                    lbl_LuongNhanDuoc.Text = "0 VND";
+                    lbl_ThueVat.Text = "0 VND";
+
 
                     MessageBox.Show($"Không tìm thấy thông tin lương chi tiết cho nhân viên {maNV}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -339,14 +355,6 @@ namespace GUI
                 MessageBox.Show($"Lỗi khi tải dữ liệu Chấm Công: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-        //private void LoadChamCongChiTiet(string maNV, DateTime ngayCC)
-        //{
-            
-        //}
-
-
 
         private void dataGridView_ChamCong_SelectionChanged(object sender, EventArgs e)
         {
@@ -573,7 +581,7 @@ namespace GUI
         {
             try
             {
-                // Kiểm tra nếu Mã NV được chọn trong ComboBox
+                // Lấy Mã Nhân Viên từ ComboBox (hoặc từ bảng chấm công đã chọn)
                 string maNV = cbb_MaNV.SelectedItem?.ToString();
 
                 if (string.IsNullOrEmpty(maNV))
@@ -592,45 +600,53 @@ namespace GUI
                     return;
                 }
 
-                // Kiểm tra nếu checkbox được tích vào và giá trị Vang là 2 (vắng không phép), cho phép đổi thành vắng có phép (Vang = 1)
+                // Nếu checkbox được tích vào, thay đổi trạng thái Vang thành "vắng có phép" (Vang = 1)
                 if (cbx_PhepVang.Checked)
                 {
                     if (chamCong.Vang == 0 || chamCong.Vang == 1)
                     {
-                        // Nếu Vang = 0 (không vắng) hoặc Vang = 1 (vắng có phép), không thể thay đổi
                         MessageBox.Show("Không thể thay đổi tình trạng vắng khi nhân viên đã check-in hoặc đã vắng có phép.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else if (chamCong.Vang == 2) // Nếu Vang = 2 (vắng không phép), cho phép thay đổi thành vắng có phép
                     {
-                        var dialogResult = MessageBox.Show(
-                            "Bạn muốn thay đổi tình trạng vắng không phép thành vắng có phép?",
-                            "Thông báo",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Question);
+                        chamCong.Vang = 1;  // Đánh dấu vắng có phép
 
-                        if (dialogResult == DialogResult.Yes)
+                        // Cập nhật lại vào CSDL
+                        bool success = chamCongBLL.UpdateChamCong(chamCong);
+                        if (success)
                         {
-                            // Thay đổi giá trị Vang thành 1 (vắng có phép)
-                            chamCong.Vang = 1;
-
-                            // Cập nhật vào CSDL
-                            bool success = chamCongBLL.UpdateChamCong(chamCong);
-                            if (success)
-                            {
-                                MessageBox.Show("Cập nhật thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                MessageBox.Show("Cập nhật không thành công!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
+                            MessageBox.Show("Cập nhật tình trạng vắng có phép thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            // Cập nhật lại bảng chấm công và các label hiển thị
+                            LoadChamCongData();
+                            LoadLuongChiTiet(maNV);  // Làm mới thông tin lương chi tiết
                         }
                         else
                         {
-                            cbx_PhepVang.Checked = false; // Hủy bỏ checkbox nếu người dùng chọn No
+                            MessageBox.Show("Cập nhật không thành công!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
-                
+                else // Nếu checkbox không được tích vào (vắng không phép)
+                {
+                    if (chamCong.Vang == 1)
+                    {
+                        chamCong.Vang = 2;  // Đánh dấu vắng không phép
+
+                        // Cập nhật lại vào CSDL
+                        bool success = chamCongBLL.UpdateChamCong(chamCong);
+                        if (success)
+                        {
+                            MessageBox.Show("Cập nhật tình trạng vắng không phép thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            // Cập nhật lại bảng chấm công và các label hiển thị
+                            LoadChamCongData();
+                            LoadLuongChiTiet(maNV);  // Làm mới thông tin lương chi tiết
+                        }
+                        else
+                        {
+                            MessageBox.Show("Cập nhật không thành công!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -698,30 +714,14 @@ namespace GUI
 
                     recordNumber++;  // Increment record number for MaCC
                 }
+                LoadChamCongData();  // Làm mới bảng chấm công
+                LoadTinhLuongData();  // Làm mới bảng lương
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi khi tạo lịch chấm công: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void button_RefreshDGV_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // Clear existing rows in the DataGridView
-                dataGridView_ChamCong.Rows.Clear();
-
-                // Reload the data from the database or any data source
-                LoadChamCongData();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while restarting the DataGridView: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        #endregion
-
         private void button_Delete_Click(object sender, EventArgs e)
         {
             string maNV = textBox_Employeed.Text.Trim();
@@ -783,27 +783,24 @@ namespace GUI
         {
             try
             {
-                // Kiểm tra mã nhân viên đã được chọn chưa
                 if (string.IsNullOrEmpty(textBox_Employeed.Text))
                 {
                     MessageBox.Show("Vui lòng chọn nhân viên để cập nhật!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-
-                // Lấy thông tin nhân viên từ các TextBox
                 var nv = new NhanVienDTO
                 {
-                    MaNV = textBox_Employeed.Text,  // Mã nhân viên không thay đổi
-                    HoNV = string.IsNullOrEmpty(textBox_Surname.Text) ? null : textBox_Surname.Text, // Chỉ cập nhật nếu có giá trị
-                    TenNV = string.IsNullOrEmpty(textBox_Name.Text) ? null : textBox_Name.Text, // Chỉ cập nhật nếu có giá trị
-                    DiaChi = string.IsNullOrEmpty(textBox_DiaChi.Text) ? null : textBox_DiaChi.Text, // Chỉ cập nhật nếu có giá trị
-                    SoDT = string.IsNullOrEmpty(textBox_SDT.Text) ? null : textBox_SDT.Text, // Chỉ cập nhật nếu có giá trị
-                    Email = string.IsNullOrEmpty(textBox_email.Text) ? null : textBox_email.Text, // Chỉ cập nhật nếu có giá trị
-                    NgaySinh = dateTime_DateOfBirth.Value, // Giữ nguyên ngày sinh
-                    GioiTinh = radioBut_Male.Checked, // Giới tính không thay đổi
-                    CCCD = string.IsNullOrEmpty(textBox_CCCD.Text) ? null : textBox_CCCD.Text, // Chỉ cập nhật nếu có giá trị
-                    ChucVu = string.IsNullOrEmpty(textBox_ChucVu.Text) ? null : textBox_ChucVu.Text, // Chỉ cập nhật nếu có giá trị
-                    MaPB = string.IsNullOrEmpty(textBox_MaPhongBan.Text) ? null : textBox_MaPhongBan.Text // Chỉ cập nhật nếu có giá trị
+                    MaNV = textBox_Employeed.Text,  
+                    HoNV = string.IsNullOrEmpty(textBox_Surname.Text) ? null : textBox_Surname.Text, 
+                    TenNV = string.IsNullOrEmpty(textBox_Name.Text) ? null : textBox_Name.Text, 
+                    DiaChi = string.IsNullOrEmpty(textBox_DiaChi.Text) ? null : textBox_DiaChi.Text,
+                    SoDT = string.IsNullOrEmpty(textBox_SDT.Text) ? null : textBox_SDT.Text, 
+                    Email = string.IsNullOrEmpty(textBox_email.Text) ? null : textBox_email.Text, 
+                    NgaySinh = dateTime_DateOfBirth.Value, 
+                    GioiTinh = radioBut_Male.Checked, 
+                    CCCD = string.IsNullOrEmpty(textBox_CCCD.Text) ? null : textBox_CCCD.Text, 
+                    ChucVu = string.IsNullOrEmpty(textBox_ChucVu.Text) ? null : textBox_ChucVu.Text, 
+                    MaPB = string.IsNullOrEmpty(textBox_MaPhongBan.Text) ? null : textBox_MaPhongBan.Text 
                 };
 
                 // Gọi BLL để cập nhật dữ liệu
@@ -827,7 +824,6 @@ namespace GUI
 
         private void Bt_ClearnTxtBox_Click(object sender, EventArgs e)
         {
-            // Xóa nội dung của tất cả các TextBox
             textBox_Employeed.Clear();
             textBox_Surname.Clear();
             textBox_Name.Clear();
@@ -837,10 +833,11 @@ namespace GUI
             textBox_CCCD.Clear();
             textBox_ChucVu.Clear();
             textBox_MaPhongBan.Clear();
-
-            // Nếu có DateTimePicker hoặc các điều khiển khác cần làm sạch, cũng xử lý luôn
-            dateTime_DateOfBirth.Value = DateTime.Now;  // Hoặc đặt một giá trị mặc định nào đó
-            radioBut_Male.Checked = false; // Hoặc tùy thuộc vào yêu cầu của bạn
+            dateTime_DateOfBirth.Value = DateTime.Now;  
+            radioBut_Male.Checked = false; 
         }
+        #endregion
+
+        
     }
 }
